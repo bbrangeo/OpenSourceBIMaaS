@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoint xmlns="http://ws.apache.org/ns/synapse" name="modeldsendpoint">
+   <address uri="http://52.74.66.119:9775/services/BIMaaS_Model_DS.SOAP12Endpoint/"/>
+</endpoint>

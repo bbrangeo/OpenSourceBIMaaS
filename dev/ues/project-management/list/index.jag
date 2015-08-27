@@ -6,9 +6,13 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
 %>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="../project-management/list/js/project_list_services.js"></script>
+
 
 
 <script type="application/javascript">
+
+
    function loadProjectUpdate(project_id)
    {
 
@@ -54,112 +58,28 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
 
 </script>
 
-<script type="application/javascript">
-   var createCORSRequest = function(
-      method, url)
-   {
-      var xhr = new XMLHttpRequest();
-      if ("withCredentials" in
-         xhr)
-      {
-         // Most browsers.
-         xhr.open(method, url,
-            true);
-      }
-      else if (typeof XDomainRequest !=
-         "undefined")
-      {
-         // IE8 & IE9
-         xhr = new XDomainRequest();
-         xhr.open(method, url);
-      }
-      else
-      {
-         // CORS not supported.
-         xhr = null;
-      }
-      return xhr;
-   };
-
-   var url =
-      'https://52.74.66.119:9451/mock-services-1.0.0/services/project/all';
-   var method = 'POST';
-   var xhr = createCORSRequest(method, url);
-   var name1;
-   var name2;
-
-   xhr.onload = function()
-   {
-      // Success code goes here
-      var jsn = JSON.parse(xhr.response);
-      var template = $('#project_row_template')
-         .html();
-
-      $('#project-items-container')
-         .html('')
-
-      $.each(jsn.project,
-         function(i, v)
-         {
-            // template = template_ori;
-            x = template.replace(/{project_name}/g, v.projectName)
-               .replace(
-                  /{project_type}/g, v.category)
-               .replace(/{project_id}/g, v.projectId);
-
-            // console.log(x);
-            //if(i == 2 ) { 
-            //   }
-            $('#project-items-container')
-               .append(x);
-         });
-
-      <!-- Icheck for the check box. -->
-      $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red')
-         .iCheck(
-         {
-            checkboxClass: 'icheckbox_minimal-red',
-            radioClass: 'iradio_minimal-red'
-         });
-
-      //Flat red color scheme for iCheck
-      $('input[type="checkbox"].flat-red, input[type="radio"].flat-red')
-         .iCheck(
-         {
-            checkboxClass: 'icheckbox_flat-green',
-            radioClass: 'iradio_flat-green'
-         });
-   };
-
-   xhr.onerror = function()
-   {
-      // Error code goes here.
-   };
-   xhr.send();
-
-   //Red color scheme for iCheck
-
-</script>
 
 <script id="project_row_template" type="text/template">
    <tr>
-      <td>{project_name}</td>
-      <td>{project_type}</td>
+      <td>{project_name}<input type="hidden" name="poid" value="{poid}" id="poid"/><input type="hidden" name="description" value="{description}" id="description"/><input type="hidden" name="latitude" value="{latitude}" id="latitude"/><input type="hidden" name="longitude" value="{longitude}" id="longitude"/></td>
+      <td class="fa-type">{project_type}</td>
+	  <td class="fa-parent">
+         <a href="#" class="fa fa-fw fa-parent" value="{parent_id}">{parent_name}</a>
+      </td>
       <td>
          <a href="#" class="fa fa-fw fa-edit" onclick="loadProjectUpdate({project_id});"></a>
       </td>
       <td>
-         <a href="#" class="fa fa-fw fa-search" onclick="$('#popup-proj1-details').show();"></a>
+         <a href="#" class="fa fa-fw fa-search" onclick="$(this).parent().addClass('selectedForViewDetails');loadDetails();"></a>
       </td>
       <td>
-         <a href="#" class="fa fa-fw fa-send" onclick="$('#popup-proj1-checkin').show();"></a>
+         <a href="#" class="fa fa-fw fa-send" onclick="$(this).parent().addClass('selectedForCheckin');loadCheckinParameters();"></a>
       </td>
       <td>
          <input class="flat-red" type="checkbox" value="1" name="demo" checked="checked" />
       </td>
    </tr>
 </script>
-
 
 <!-- iCheck for checkboxes and radio inputs -->
 <link href="../project-management/list/plugins/iCheck/all.css" rel="stylesheet" type="text/css" />
@@ -191,7 +111,7 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
 <!-- ============================ PROJECT CREATE =============================== -->
 
 <section class="content">
-
+<div id="success" align="center"><span style="color:green;" >Project Successfully Created ...</span></div><br><br>
    <div class="row">
 
       <!-- left column -->
@@ -218,6 +138,7 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
                      <tr>
                         <th>Project name</th>
                         <th>Category</th>
+						<th>Parent</th>
                         <th>Edit</th>
                         <th>View</th>
                         <th>Check In</th>
@@ -227,6 +148,7 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
                   <tbody id="project-items-container">
                   </tbody>
                </table>
+		<div class="p" align="center"></div>
             </div>
             <!-- /.box-body -->
          </div>
@@ -243,59 +165,42 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
                      <div class="modal-body">
                         <div class="row">
                            <div class="col-md-6">Project Name:</div>
-                           <div class="col-md-6">ABC project</div>
+                           <div class="col-md-6" id="viewProjectName"></div>
                         </div>
                         <div class="row">
                            <div class="col-md-6">Description:</div>
-                           <div class="col-md-6">Loram Posam</div>
+                           <div class="col-md-6" id="viewProjectDescription"></div>
                         </div>
                         <div class="row">
                            <div class="col-md-6">Parent Project:</div>
-                           <div class="col-md-6">None</div>
+                           <div class="col-md-6" id="viewProjectParentName"></div>
                         </div>
                         <div class="row">
                            <div class="col-md-6">Project Location:</div>
                            <div class="col-md-6">
-                              <p>Longitude: 21</p>
-                              <p>Latitude: 21</p>
+                              <p  id="viewProjectLongitude"></p>
+                              <p  id="viewProjectLatitude"></p>
                            </div>
                         </div>
                         <div class="row">
                            <div class="col-md-6">Project Type:</div>
-                           <div class="col-md-6">Construction</div>
+                           <div class="col-md-6" id="viewProjectType"></div>
                         </div>
                         <div class="row">
                            <div class="col-xs-12" style="margin-top: 10px;">
                               <div class="box-body table-responsive no-padding">
                                  <table class="table table-bordered table-hover">
-                                    <tbody>
+                                    <tbody id="viewDetailsTableBody">
                                        <tr>
                                           <th>File Name</th>
                                           <th>Check In Date</th>
                                           <th>Revision Id</th>
-                                          <th>Set As active</th>
+                                          <th>Active Revision</th>
                                           <th>Status</th>
-                                       </tr>
-                                       <tr>
-                                          <td>Model1.ifc</td>
-                                          <td>01-Jan-2015</td>
-                                          <td>1</td>
-                                          <td>
-                                             <input class="minimal-red" type="radio" value="1" name="demo">
-                                          </td>
-                                          <td>Processing..</td>
-                                       </tr>
-                                       <tr>
-                                          <td>Model2.ifc</td>
-                                          <td>02-Jan-2015</td>
-                                          <td>2</td>
-                                          <td>
-                                             <input class="minimal-red" type="radio" value="1" name="demo">
-                                          </td>
-                                          <td>Checked In</td>
                                        </tr>
                                     </tbody>
                                  </table>
+								 <input id="viewProjectPoid" type="hidden" value=""/>
                               </div>
                               <!-- /.box-body -->
                            </div>
@@ -327,40 +232,28 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
                      <div class="modal-body">
                         <div class="row">
                            <div class="col-md-6">Upload Model File:</div>
+				
+
+				
                            <div class="col-md-6">
-                              <input type="file" id="exampleInputFile">
-                              <p class="help-block">Select your logo for the project</p>
+                              <input type="file" id="ifcInputFile">
+                              <p class="help-block">Select the IFC file</p>
+							  <input id="checkinPoid" type="hidden" value=""/>
+<div class="hf" align="center"></div>
                            </div>
+						</div>
                         </div>
                         <div class="row">
                            <div class="col-xs-12" style="margin-top: 10px;">
                               <div class="box-body table-responsive no-padding">
-                                 <table class="table table-bordered table-hover">
-                                    <tbody>
+                                 <table class="table table-bordered table-hover" id="checkInRevisionTable">
+                                    <tbody id="checkInRevisionTableBody">
                                        <tr>
                                           <th>File Name</th>
                                           <th>Check In Date</th>
                                           <th>Revision Id</th>
                                           <th>Set As active</th>
                                           <th>Status</th>
-                                       </tr>
-                                       <tr>
-                                          <td>Model1.ifc</td>
-                                          <td>01-Jan-2015</td>
-                                          <td>1</td>
-                                          <td>
-                                             <input class="minimal-red" type="radio" value="1" name="demo">
-                                          </td>
-                                          <td>Processing..</td>
-                                       </tr>
-                                       <tr>
-                                          <td>Model2.ifc</td>
-                                          <td>02-Jan-2015</td>
-                                          <td>2</td>
-                                          <td>
-                                             <input class="minimal-red" type="radio" value="1" name="demo">
-                                          </td>
-                                          <td>Checked In</td>
                                        </tr>
                                     </tbody>
                                  </table>
@@ -372,7 +265,7 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
 
                      <div class="modal-footer">
                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" onclick="$('.modal-plane').hide();">Close</button>
-                        <button type="button" class="btn btn-outline">Save changes</button>
+                        <button type="button" class="btn btn-outline" id="saveChangesToIfcFilesButton">Save changes</button>
                      </div>
                   </div>
                   <!-- /.modal-content -->

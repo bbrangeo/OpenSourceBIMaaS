@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint xmlns="http://ws.apache.org/ns/synapse" name="bimserverendpoint">
-   <http method="post" uri-template="http://52.74.66.119:9771/bimserver/json"/>
+   <http method="post" uri-template="http://52.74.66.119:9771/bim/json"/>
 </endpoint>

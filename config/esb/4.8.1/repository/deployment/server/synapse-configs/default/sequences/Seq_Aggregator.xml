@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="Seq_Aggregator">
+   <aggregate id="ObjectAggregater">
+      <completeCondition>
+         <messageCount xmlns:ns="http://org.apache.synapse/xsd" min="{//end-stream}" max="-1"/>
+      </completeCondition>
+      <onComplete xmlns:s12="http://www.w3.org/2003/05/soap-envelope"
+                  xmlns:ns="http://org.apache.synapse/xsd"
+                  xmlns:s11="http://schemas.xmlsoap.org/soap/envelope/"
+                  expression="/s11:Envelope/s11:Body/child::*[position()=1] | /s12:Envelope/s12:Body/child::*[position()=1]">
+         <log>
+            <property name="__________%%%%%%%%%%%%%%%%%%____________________"
+                      value="________________________________"/>
+            <property name="____________________BODY______________________"
+                      expression="json-eval($)"/>
+         </log>
+         <drop/>
+      </onComplete>
+   </aggregate>
+</sequence>

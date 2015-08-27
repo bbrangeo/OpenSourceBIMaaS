@@ -1,0 +1,12 @@
+<%
+var scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+
+
+
+%>
+succcess
+

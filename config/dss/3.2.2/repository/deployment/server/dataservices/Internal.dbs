@@ -1,0 +1,45 @@
+<data name="Internal" transports="http https local">
+   <config id="bim_ds">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://127.0.0.1:3306/bim_exchange</property>
+      <property name="username">root</property>
+      <property name="password">1qaz2wsx@</property>
+   </config>
+   <query id="insertToChatHistory_query" useConfig="bim_ds">
+      <sql>INSERT INTO chat_history (message, poid, user_id, user, revision_id) VALUES (:message,:poid,:userId,:userName,:revisionId);</sql>
+      <param name="poid" sqlType="STRING"/>
+      <param name="userId" sqlType="STRING"/>
+      <param name="userName" sqlType="STRING"/>
+      <param name="revisionId" sqlType="STRING"/>
+      <param name="message" sqlType="STRING"/>
+   </query>
+   <query id="getChatHistory_query" useConfig="bim_ds">
+      <sql>SELECT * FROM chat_history WHERE poid=:poid AND message_id&gt;:startMessageId</sql>
+      <result element="Comments" rowName="Comment">
+         <element column="message_id" name="messageId" xsdType="long"/>
+         <element column="message" name="message" xsdType="string"/>
+         <element column="poid" name="poid" xsdType="string"/>
+         <element column="user_id" name="userId" xsdType="string"/>
+         <element column="user" name="user" xsdType="string"/>
+         <element column="revision_id" name="revisionId" xsdType="string"/>
+         <element column="posted_timestamp" name="timestamp" xsdType="dateTime"/>
+      </result>
+      <param name="poid" sqlType="STRING"/>
+      <param name="startMessageId" sqlType="STRING"/>
+   </query>
+   <operation name="insertToChatHistory_Op" returnRequestStatus="true">
+      <call-query href="insertToChatHistory_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="userId" query-param="userId"/>
+         <with-param name="userName" query-param="userName"/>
+         <with-param name="revisionId" query-param="revisionId"/>
+         <with-param name="message" query-param="message"/>
+      </call-query>
+   </operation>
+   <operation name="getChatHistory_Op">
+      <call-query href="getChatHistory_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="startMessageId" query-param="startMessageId"/>
+      </call-query>
+   </operation>
+</data>

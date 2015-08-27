@@ -1,0 +1,134 @@
+<data name="BIMaaS_Model_DS" transports="http https local">
+   <config id="bim_ds">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://127.0.0.1:3306/bim_exchange</property>
+      <property name="username">root</property>
+      <property name="password">1qaz2wsx@</property>
+   </config>
+   <query id="UpdateCheckout_query" useConfig="bim_ds">
+      <sql>UPDATE checkout SET is_locked=:isLocked WHERE poid=:poid AND checked_out_by=:userName AND is_locked=1</sql>
+      <param name="isLocked" sqlType="STRING"/>
+      <param name="poid" sqlType="STRING"/>
+      <param name="userName" sqlType="STRING"/>
+   </query>
+   <query id="insertCheckinStatus_query" useConfig="bim_ds">
+      <sql>INSERT INTO checkin_status (poid, file_name, reference_id, status) VALUES (:poid, :fileName, :referenceId, :status)</sql>
+      <param name="poid" sqlType="STRING"/>
+      <param name="fileName" sqlType="STRING"/>
+      <param name="referenceId" sqlType="STRING"/>
+      <param name="status" sqlType="STRING"/>
+   </query>
+   <query id="updateCheckinStatusById_query" useConfig="bim_ds">
+      <sql>UPDATE checkin_status SET status=:status WHERE reference_id=:referenceId</sql>
+      <param name="status" sqlType="STRING"/>
+      <param name="referenceId" sqlType="STRING"/>
+   </query>
+   <query id="updateCheckinStatus_Failed_query" useConfig="bim_ds">
+      <sql>UPDATE checkin_status SET status='FAILED', info=:originalJsonBody WHERE status='QUEUED' OR status='WAITING' ORDER BY checkin_status_id ASC LIMIT 1</sql>
+      <param name="originalJsonBody" sqlType="STRING"/>
+   </query>
+   <query id="updateCheckinStatus_query" useConfig="bim_ds">
+      <sql>UPDATE checkin_status SET status=:status, info=:originalJsonBody WHERE status='QUEUED' OR status='WAITING' ORDER BY checkin_status_id ASC LIMIT 1</sql>
+      <param name="status" sqlType="STRING"/>
+      <param name="originalJsonBody" sqlType="STRING"/>
+   </query>
+   <query id="updateCheckinStatus_Success_query" useConfig="bim_ds">
+      <sql>UPDATE checkin_status SET status='SUCCESS', revision_id=:revisionId, info=:info WHERE status='QUEUED' OR status='WAITING' ORDER BY checkin_status_id ASC LIMIT 1</sql>
+      <param name="info" sqlType="STRING"/>
+      <param name="revisionId" sqlType="STRING"/>
+   </query>
+   <query id="getPoidFromCheckinStatusByStatus_query" useConfig="bim_ds">
+      <sql>SELECT poid FROM checkin_status WHERE status=:status</sql>
+      <result element="results" rowName="result">
+         <element column="poid" name="poid" xsdType="string"/>
+      </result>
+      <param name="status" sqlType="STRING"/>
+   </query>
+   <query id="getAllRevisionsFromCheckinStatusByPoid_query" useConfig="bim_ds">
+      <sql>SELECT revision_id,file_name,reference_id,status,last_updated_timestamp FROM checkin_status WHERE poid=:poid</sql>
+      <result element="revisions" rowName="revision">
+         <element column="revision_id" name="revisionId" xsdType="string"/>
+         <element column="file_name" name="fileName" xsdType="string"/>
+         <element column="reference_id" name="referenceId" xsdType="string"/>
+         <element column="status" name="status" xsdType="string"/>
+         <element column="last_updated_timestamp" name="lastUpdatedTimestamp" xsdType="string"/>
+      </result>
+      <param name="poid" sqlType="STRING"/>
+   </query>
+   <query id="updateActiveRevisionId_query" useConfig="bim_ds">
+      <sql>UPDATE project SET active_revision_id=:revisionId WHERE poid=:poid</sql>
+      <param name="revisionId" sqlType="STRING"/>
+      <param name="poid" sqlType="STRING"/>
+   </query>
+   <query id="getActiveRevisionIdByPoid_query" useConfig="bim_ds">
+      <sql>SELECT active_revision_id FROM project WHERE poid=:poid</sql>
+      <result element="revisionIds" rowName="revisionId">
+         <element column="active_revision_id" name="activeRevisionId" xsdType="string"/>
+      </result>
+      <param name="poid" sqlType="STRING"/>
+   </query>
+   <operation name="updateCheckout_Op" returnRequestStatus="true">
+      <description>This operation is used to update the checkout table                       &#13;                                    </description>
+      <call-query href="UpdateCheckout_query">
+         <with-param name="isLocked" query-param="isLocked"/>
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </operation>
+   <operation name="InsertCheckinStatus_Op" returnRequestStatus="true">
+      <description>Inserting a row in to checkin_status table                                                                                            &#13;                                    </description>
+      <call-query href="insertCheckinStatus_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="fileName" query-param="fileName"/>
+         <with-param name="referenceId" query-param="referenceId"/>
+         <with-param name="status" query-param="status"/>
+      </call-query>
+   </operation>
+   <operation name="updateCheckinStatusById_Op" returnRequestStatus="true">
+      <description>updating checkin_status by reference_id                                    &#13;                                    </description>
+      <call-query href="updateCheckinStatusById_query">
+         <with-param name="status" query-param="status"/>
+         <with-param name="referenceId" query-param="referenceId"/>
+      </call-query>
+   </operation>
+   <operation name="updateCheckinStatus_Failed_Op" returnRequestStatus="true">
+      <call-query href="updateCheckinStatus_Failed_query">
+         <with-param name="originalJsonBody" query-param="originalJsonBody"/>
+      </call-query>
+   </operation>
+   <operation name="updateCheckinStatus_Op" returnRequestStatus="true">
+      <description>Updating checkin_status to either 'SUCCESS' or 'FAILED'</description>
+      <call-query href="updateCheckinStatus_query">
+         <with-param name="status" query-param="status"/>
+         <with-param name="originalJsonBody" query-param="originalJsonBody"/>
+      </call-query>
+   </operation>
+   <operation name="updateCheckinStatus_Success_Op" returnRequestStatus="true">
+      <description>Updating checkin_status to SUCCESS                                                                                                            &#13;                                    </description>
+      <call-query href="updateCheckinStatus_Success_query">
+         <with-param name="info" query-param="info"/>
+         <with-param name="revisionId" query-param="revisionId"/>
+      </call-query>
+   </operation>
+   <operation name="getPoidFromCheckinStatusByStatus_Op">
+      <call-query href="getPoidFromCheckinStatusByStatus_query">
+         <with-param name="status" query-param="status"/>
+      </call-query>
+   </operation>
+   <operation name="getAllRevisionsFromCheckinStatusByPoid_Op">
+      <call-query href="getAllRevisionsFromCheckinStatusByPoid_query">
+         <with-param name="poid" query-param="poid"/>
+      </call-query>
+   </operation>
+   <operation name="updateActiveRevisionId_Op" returnRequestStatus="true">
+      <call-query href="updateActiveRevisionId_query">
+         <with-param name="revisionId" query-param="revisionId"/>
+         <with-param name="poid" query-param="poid"/>
+      </call-query>
+   </operation>
+   <operation name="getActiveRevisionIdByPoid_Op">
+      <call-query href="getActiveRevisionIdByPoid_query">
+         <with-param name="poid" query-param="poid"/>
+      </call-query>
+   </operation>
+</data>

@@ -1,0 +1,3 @@
+<ns:loginWithRememberMeCookieResponse xmlns:ns="http://authentication.services.core.carbon.wso2.org">
+  <ns:return>false</ns:return>
+</ns:loginWithRememberMeCookieResponse>

@@ -19,6 +19,7 @@
 		<CApp.type>lib/synapse/mediator</CApp.type>
 	</properties>
 	<modules>
+		<module>networkrail</module>
 		<module>core</module>
 	</modules>
 	<dependencies>

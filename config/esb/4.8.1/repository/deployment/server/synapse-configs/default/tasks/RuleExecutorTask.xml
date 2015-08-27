@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task xmlns="http://ws.apache.org/ns/synapse"
+      name="RuleExecutorTask"
+      class="com.bimaas.task.RuleInvokerTask"
+      group="synapse.simple.quartz">
+   <trigger count="1" interval="20"/>
+   <property xmlns:task="http://www.wso2.org/products/wso2commons/tasks"
+             name="ruleId"
+             value="1"/>
+   <property xmlns:task="http://www.wso2.org/products/wso2commons/tasks"
+             name="proxyName"
+             value="RuleExecutorOnObjects"/>
+</task>

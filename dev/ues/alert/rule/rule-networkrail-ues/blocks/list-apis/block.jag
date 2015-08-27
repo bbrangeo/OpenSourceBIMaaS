@@ -1,0 +1,24 @@
+<%
+jagg.block("list-apis", {
+    initializer:function (data) {
+
+    },
+    getInputs:function () {
+        return {
+            "user":null
+        }
+    },
+    getOutputs:function (inputs) {
+
+        var apis, result, user = inputs.user;
+        result = jagg.module("api").getPublishedAPIsByProvider(user);
+        apis = result.apis;
+
+        return {
+            "apis":apis
+        };
+    }
+
+
+});
+%>

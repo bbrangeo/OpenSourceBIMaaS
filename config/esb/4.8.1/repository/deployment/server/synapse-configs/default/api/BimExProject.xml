@@ -2,7 +2,7 @@
 <api xmlns="http://ws.apache.org/ns/synapse"
      name="BimExProject"
      context="/bimex-project">
-   <resource methods="OPTIONS POST" url-mapping="/CreateProject">
+   <resource methods="POST OPTIONS" url-mapping="/CreateProject">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)"
@@ -95,7 +95,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/GetProjectById">
+   <resource methods="OPTIONS POST" url-mapping="/GetProjectById">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectById">
@@ -141,7 +141,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/GetProjectsByPartialName">
+   <resource methods="OPTIONS POST" url-mapping="/GetProjectsByPartialName">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectsByPartialName">
@@ -196,7 +196,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST" url-mapping="/UpdateProject">
+   <resource methods="POST OPTIONS" url-mapping="/UpdateProject">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="updateProject">
@@ -245,7 +245,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/DeactivateProject">
+   <resource methods="OPTIONS POST" url-mapping="/DeactivateProject">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="deactivateProject">
@@ -291,7 +291,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/ActivateProject">
+   <resource methods="OPTIONS POST" url-mapping="/ActivateProject">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="activateProject">
@@ -337,7 +337,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/GetAllProjects">
+   <resource methods="OPTIONS POST" url-mapping="/GetAllProjects">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getAllProjects">
@@ -388,7 +388,7 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/GetProjectsByGeoLocation">
+   <resource methods="OPTIONS POST" url-mapping="/GetProjectsByGeoLocation">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectsByGeoLocation">

@@ -1,0 +1,218 @@
+<%
+scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+%>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+   var createCORSRequest = function(method, url)
+   {
+      var xhr = new XMLHttpRequest();
+      if ("withCredentials" in xhr)
+      {
+         // Most browsers.
+         xhr.open(method, url, true);
+      }
+      else if (typeof XDomainRequest != "undefined")
+      {
+         // IE8 & IE9
+         xhr = new XDomainRequest();
+         xhr.open(method, url);
+      }
+      else
+      {
+         // CORS not supported.
+         xhr = null;
+      }
+      return xhr;
+   };
+
+   var url = 'https://52.74.66.119:9451/services-networkrail-as-1.0.0/door-height-rule/get-rule/1';
+   var method = 'POST';
+   var xhr = createCORSRequest(method, url);
+
+   xhr.onload = function()
+   {
+      // Success code goes here
+      var jsn = JSON.parse(xhr.response);
+      min = jsn.ruleDTO.listOfRuleProperties.property[0].propertyValue;
+      $('#minHeight')
+         .val(min + ' m');
+
+      max = jsn.ruleDTO.listOfRuleProperties.property[1].propertyValue;
+      $('#maxHeight')
+         .val(max + ' m');
+
+   };
+
+   xhr.onerror = function()
+   {
+      // Error code goes here.
+   };
+
+   xhr.send();
+
+</script>
+
+<!-- ============================ R U L E S S S S S S S=============================== -->
+<div class="row" style="margin: 0 !important;">
+
+   <!-- ======= BEAM RATIO RULE ======== -->
+   <div class="col-md-6">
+      <div class="box box-warning box-solid">
+         <div class="box-header with-border">
+            <h3 class="box-title">Beam Dimension Ratio Rule</h3>
+            <div class="box-tools pull-right">
+               <button class="btn btn-box-tool" data-widget="collapse">
+                  <i class="fa fa-minus"></i>
+               </button>
+            </div>
+            <!-- /.box-tools -->
+         </div>
+         <!-- /.box-header -->
+         <div class="box-body">
+
+            <!-- ============ B O X ================ -->
+            <div class="box box-primary">
+               <div class="box-header with-border">
+                  <h3 class="box-title">Width to Height Ratio</h3>
+               </div>
+               <!-- /.box-header -->
+               <!-- form start -->
+               <form role="form">
+                  <div class="box-body">
+                     <div class="form-group">
+                        <label for="widht2HeightRatio">Width / Height</label>
+                        <input class="form-control" id="widht2HeightRatio" type="text" value="0.6">
+                     </div>
+                  </div>
+                  <!-- /.box-body -->
+
+                  <div class="box-footer">
+                     <button type="submit" class="btn btn-primary">Set</button>
+                  </div>
+               </form>
+            </div>
+            <!-- ============ B O X ================ -->
+
+         </div>
+         <!-- /.box-body -->
+
+      </div>
+      <!-- /.box -->
+   </div>
+   <!-- /.col -->
+   <!-- ======= END OF BEAM RATIO RULE ======== -->
+
+
+   <!-- ======= Column Span to Beam Depth Ratio Rule ======== -->
+   <div class="col-md-6">
+      <div class="box box-warning box-solid">
+         <div class="box-header with-border">
+            <h3 class="box-title">Span and Depth Ratio Rule</h3>
+            <div class="box-tools pull-right">
+               <button class="btn btn-box-tool" data-widget="collapse">
+                  <i class="fa fa-minus"></i>
+               </button>
+            </div>
+            <!-- /.box-tools -->
+         </div>
+         <!-- /.box-header -->
+         <div class="box-body">
+
+            <!-- ============ B O X ================ -->
+            <div class="box box-primary">
+               <div class="box-header with-border">
+                  <h3 class="box-title">Span Between Columns to Beam Depth Ratio</h3>
+               </div>
+               <!-- /.box-header -->
+               <!-- form start -->
+               <form role="form">
+                  <div class="box-body">
+                     <div class="form-group">
+                        <label for="span2DepthRatio">Span / Depth</label>
+                        <input class="form-control" id="span2DepthRatio" type="text" value="14">
+                     </div>
+                  </div>
+                  <!-- /.box-body -->
+
+                  <div class="box-footer">
+                     <button type="submit" class="btn btn-primary">Set</button>
+                  </div>
+               </form>
+            </div>
+            <!-- ============ B O X ================ -->
+
+         </div>
+         <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+   </div>
+   <!-- /.col -->
+   <!-- ======= End of Column Span to Beam Depth Ratio Rule ======== -->
+
+
+   <!-- ======= DOOR HEIGHT RULE ======== -->
+   <div class="col-md-12">
+      <div class="box box-warning box-solid">
+         <div class="box-header with-border">
+            <h3 class="box-title">Door Height Rule</h3>
+            <div class="box-tools pull-right">
+               <button class="btn btn-box-tool" data-widget="collapse">
+                  <i class="fa fa-minus"></i>
+               </button>
+            </div>
+            <!-- /.box-tools -->
+         </div>
+         <!-- /.box-header -->
+         <div class="box-body">
+
+            <!-- ============ B O X ================ -->
+            <div class="box box-primary">
+               <div class="box-header with-border">
+                  <h3 class="box-title">Set the door height range here</h3>
+               </div>
+               <!-- /.box-header -->
+               <!-- form start -->
+               <form role="form">
+                  <div class="box-body">
+                     <div class="form-group">
+                        <label for="minDoorHeight">Minimum height</label>
+                        <input class="form-control" id="minHeight" type="text">
+                     </div>
+
+                     <div class="form-group">
+                        <label for="maxDoorHeight">Maximum height</label>
+                        <input class="form-control" id="maxHeight" type="text">
+                     </div>
+
+                  </div>
+                  <!-- /.box-body -->
+
+                  <div class="box-footer">
+                     <button type="submit" class="btn btn-primary">Set</button>
+                  </div>
+               </form>
+            </div>
+            <!-- ============ B O X ================ -->
+
+         </div>
+         <!-- /.box-body -->
+
+      </div>
+      <!-- /.box -->
+   </div>
+   <!-- /.col -->
+   <!-- ======= END OF DOOR HEIGHT RULE ======== -->
+
+
+</div>
+<!-- /.row -->
+
+<!-- ============================= R U L E S S S S S S ============================== -->

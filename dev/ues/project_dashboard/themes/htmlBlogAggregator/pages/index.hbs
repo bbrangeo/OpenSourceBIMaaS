@@ -1,0 +1,124 @@
+    {{code .}}
+</head>
+<div class="content-wrapper" style="margin-left:0!important">
+
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Dashboard
+            <small>BIMaaS v 1.1</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <!-- Info boxes -->
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-sitemap"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Projects</span>
+                  <span class="info-box-number">05</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-red"><i class="fa fa-building"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Buildings</span>
+                  <span class="info-box-number">45</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+
+            <!-- fix for small devices only -->
+            <div class="clearfix visible-sm-block"></div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-green"><i class="fa fa-bolt"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Rules</span>
+                  <span class="info-box-number">215</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Users</span>
+                  <span class="info-box-number">34</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+
+          <div class="row">
+            <!-- /.col -->
+          </div><!-- /.row -->
+
+          <!-- Main row -->
+          <div class="row">
+            <!-- Left col -->
+            <!-- /.col -->
+
+              <div class="col-md-12">
+                  <!-- Info Boxes Style 2 -->
+                  <!-- /.box -->
+                  <!-- PRODUCT LIST -->
+                  <div class="box box-primary">
+                      <div class="box-header with-border">
+                          <h3 class="box-title">Active Projects</h3>
+                          <div class="box-tools pull-right">
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                          </div>
+                      </div><!-- /.box-header -->
+                      <div class="box-body">
+				<div class="p" align="center"></div>
+
+                          <ul id="product-list-in-box" class="products-list product-list-in-box">
+                              
+                          </ul>
+                      </div><!-- /.box-body -->
+                      <div class="box-footer text-center">
+                          <!--<a href="javascript::;" class="uppercase">View All Products</a>-->
+                      </div><!-- /.box-footer -->
+                  </div><!-- /.box -->
+              </div><!-- /.col -->
+          </div><!-- /.row -->
+        </section><!-- /.content -->       
+</div>
+<!-- /container -->
+
+<script id="product_list_template" type="text/template">
+   <li class="item">
+      <div class="product-img">
+          <img src="{product_img}" height="50px" width="50px" alt="Product Image" />
+      </div>
+      <div class="product-info">
+          <a href="javascript::;" class="product-title">{product_title}</a>
+          <span class="product-description">{product_description}</span>
+          <span>
+              <button type="button" class="btn btn-primary project-open-button{product_open_button_class}" id="" value="{product_open_button}" onclick="openButtonClick(this)">{product_open_button_text}</button>
+          </span>
+
+
+      </div>
+  </li><!-- /.item -->
+</script>
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+    {{js .}}
+</body>
+</html>

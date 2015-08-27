@@ -1,0 +1,170 @@
+<%
+var scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+//include("includes/header.jag");
+
+
+%>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>UES - BIM</title>
+	
+	
+	
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 3.3.4 -->
+	
+	
+	
+	
+	
+	
+  </head>
+<body class="skin-blue sidebar-mini">
+    <div class="wrapper">
+
+<div class="content-wrapper" style="margin-left:0!important">
+
+
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Dashboard
+            <small>BIMaaS v 1.1</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+          <!-- Info boxes -->
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-sitemap"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Projects</span>
+                  <span class="info-box-number">05</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-red"><i class="fa fa-building"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Buildings</span>
+                  <span class="info-box-number">45</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+
+            <!-- fix for small devices only -->
+            <div class="clearfix visible-sm-block"></div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-green"><i class="fa fa-bolt"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Rules</span>
+                  <span class="info-box-number">215</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Total Users</span>
+                  <span class="info-box-number">34</span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+
+          <div class="row">
+            <!-- /.col -->
+          </div><!-- /.row -->
+
+          <!-- Main row -->
+          <div class="row">
+            <!-- Left col -->
+            <!-- /.col -->
+
+              <div class="col-md-12">
+                  <!-- Info Boxes Style 2 -->
+                  <!-- /.box -->
+                  <!-- PRODUCT LIST -->
+                  <div class="box box-primary">
+                      <div class="box-header with-border">
+                          <h3 class="box-title">Active Projects</h3>
+                          <div class="box-tools pull-right">
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                          </div>
+                      </div><!-- /.box-header -->
+                      <div class="box-body">
+                          <ul class="products-list product-list-in-box">
+                              <li class="item">
+                                  <div class="product-img">
+                                      <img src="dist/img/denvor.jpg" height="50px" width="50px" alt="Product Image" />
+                                  </div>
+                                  <div class="product-info">
+                                      <a href="javascript::;" class="product-title">Denvor - Leap District Townhall Project </a>
+                                      <span class="product-description">
+                                          this project is about Denvor - Leap District Townhall Project
+                                      </span>
+                                      <span>
+                                          <button type="submit" class="btn btn-primary">Open Project</button>
+                                      </span>
+                                  </div>
+                              </li><!-- /.item -->
+                              <li class="item">
+                                  <div class="product-img">
+                                      <img src="dist/img/stjones.png" height="50px" width="50px" alt="Product Image" />
+                                  </div>
+                                  <div class="product-info">
+                                      <a href="javascript::;" class="product-title">St Jones Hospital Construction Project </a>
+                                      <span class="product-description">
+                                          this project is about St Jones Hospital Construction Project
+                                      </span>
+                                      <span>
+                                          <button type="submit" class="btn btn-primary">Open Project</button>
+                                      </span>
+                                  </div>
+                              </li><!-- /.item -->
+                              <li class="item">
+                                  <div class="product-img">
+                                      <img src="dist/img/rail.jpg" height="50px" width="50px" alt="Product Image" />
+                                  </div>
+                                  <div class="product-info">
+                                      <a href="javascript::;" class="product-title">Perfect Railway Project - NSW </a>
+                                      <span class="product-description">
+                                          this project is about Perfect Railway Project - NSW
+                                      </span>
+                                      <span>
+                                          <button type="submit" class="btn btn-primary">Open Project</button>
+                                      </span>
+                                  </div>
+                              </li><!-- /.item -->
+                              
+                          </ul>
+                      </div><!-- /.box-body -->
+                      <div class="box-footer text-center">
+                          <!--<a href="javascript::;" class="uppercase">View All Products</a>-->
+                      </div><!-- /.box-footer -->
+                  </div><!-- /.box -->
+              </div><!-- /.col -->
+          </div><!-- /.row -->
+        </section><!-- /.content -->
+</div>
+</div>
+</body>

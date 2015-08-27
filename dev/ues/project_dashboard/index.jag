@@ -1,0 +1,130 @@
+<%
+var caramel;
+	reader = require('/modules/reader.js'),
+	check = require('/modules/checker.jag'),
+	//projectservice = require('/modules/project_service.js'),
+	caramel = require('caramel');
+
+caramel.render({
+		'title': {text :'BIMaas | Project Dashboard'},
+		'body': {text:reader.readPosts()}
+	});
+%>
+
+ <script type="application/javascript">
+
+ //var GLOBAL_ACTIVE_PROJECT_ID = '-1';
+ if(window.GLOBAL_ACTIVE_PROJECT_ID == undefined || window.GLOBAL_ACTIVE_PROJECT_ID == null){
+	window.GLOBAL_ACTIVE_PROJECT_ID = '-1';
+	//alert( "one!" + window.GLOBAL_ACTIVE_PROJECT_ID);
+ }else{
+	//alert( "two!" + window.GLOBAL_ACTIVE_PROJECT_ID);
+ }
+	var openButtonClick = function(objButton){
+	
+		if(window.GLOBAL_ACTIVE_PROJECT_ID == '-1'){
+		
+			objButton.innerHTML = "Close Project";
+			$(objButton).addClass("opened-project").siblings().removeClass("opened-project");
+			window.GLOBAL_ACTIVE_PROJECT_ID = objButton.value;
+			//alert('opening: '+window.GLOBAL_ACTIVE_PROJECT_ID);
+		}else{
+			//alert('closing: '+window.GLOBAL_ACTIVE_PROJECT_ID);
+			if(objButton.value == window.GLOBAL_ACTIVE_PROJECT_ID){
+				$(objButton).removeClass("opened-project");
+				objButton.innerHTML = "Open Project";
+				window.GLOBAL_ACTIVE_PROJECT_ID = '-1';
+			}else{
+				$('.opened-project').text("Open Project");
+				objButton.innerHTML = "Close Project";
+				window.GLOBAL_ACTIVE_PROJECT_ID = objButton.value;
+				$('.opened-project').removeClass("opened-project");
+				$(objButton).addClass("opened-project");
+				//alert('opening: '+window.GLOBAL_ACTIVE_PROJECT_ID);
+			}
+			
+		}
+		
+	}
+ 
+ var createCORSRequest = function(method, url)
+   {
+      var xhr = new XMLHttpRequest();
+      if ("withCredentials" in xhr)
+  {
+     // Most browsers.
+     xhr.open(method, url, true);
+  }
+  else if (typeof XDomainRequest != "undefined")
+  {
+     // IE8 & IE9
+     xhr = new XDomainRequest();
+     xhr.open(method, url);
+  }
+  else
+  {
+     // CORS not supported.
+         xhr = null;
+      }
+      
+      xhr.setRequestHeader("Content-Type", "application/json");
+      return xhr;
+   };
+   
+   var req = '{"request": {"method": "getAllProjects" }}';
+	
+   var url = 'https://demo.bimaas.uk:8247/bimaas-project/GetAllProjects';
+  
+   var method = 'POST';
+	$('.p').html("<img src='https:\/\/demo.bimaas.uk:9453\/bs_test\/images\/loading.gif'></img>");
+
+   var xhr = createCORSRequest(method, url);
+	xhr.send(req);
+   xhr.onload = function()
+   {
+		$('.p').html('');
+
+      // Success code goes here
+	  
+	  console.log(xhr.response);
+	   var jsn = JSON.parse(xhr.response);
+	   
+  var template = $('#product_list_template').html();
+
+  $('#product-list-in-box')
+ .html('');
+
+  $.each(jsn.response.result,
+     function(i, v)
+     {
+        // template = template_ori;
+		var productButtonText='';
+		var productButtonClass='';
+		if(v.parentId == '-1'){
+		if(window.GLOBAL_ACTIVE_PROJECT_ID == v.oid){
+			productButtonText = 'Close Project';
+			productButtonClass = ' opened-project';
+		}else{
+			productButtonText = 'Open Project';
+		}
+			console.log("index:"+i);
+			x = template.replace(/{product_title}/g, v.name)
+		   .replace(/{product_description}/g, v.description).replace(/{product_img}/g, "themes/htmlBlogAggregator/img/denvor.jpg").replace(/{product_open_button}/g, v.oid).replace(/{product_open_button_text}/g, productButtonText).replace(/{product_open_button_class}/g, productButtonClass);
+			// console.log(x);
+			//if(i == 2 ) { 
+			//   }
+			$('#product-list-in-box').append(x);
+		}else{
+		}
+		
+     });
+	
+   };
+
+   xhr.onerror = function()
+   {
+      // Error code goes here.
+   };
+	
+	
+ </script>

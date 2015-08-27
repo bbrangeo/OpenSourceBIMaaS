@@ -1,0 +1,17 @@
+<data name="GetProjectsJSON" transports="http https local">
+   <config id="bim">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://127.0.0.1:3306/bim_exchange</property>
+      <property name="username">root</property>
+      <property name="password">1qaz2wsx@</property>
+   </config>
+   <query id="GetProjectsJSONQuery" useConfig="bim">
+      <sql>SELECT project_id as PRJ_ID, project_name as PRJ_NAME from project</sql>
+      <result outputType="json">
+         <element column="PRJ_NAME" name="PRJ_NAME" xsdType="string"/>         {&#13;    "projects": {&#13;        "project": [&#13;            {&#13;                "projectId": "$PRJ_ID(type:long)",&#13;                "projectName": "$PRJ_NAME"&#13;            }&#13;        ]&#13;    }&#13;}      
+      </result>
+   </query>
+   <operation name="GetProjectsJSONOP">
+      <call-query href="GetProjectsJSONQuery"/>
+   </operation>
+</data>

@@ -1,0 +1,62 @@
+<%
+function auth(){
+
+var success;
+
+
+var scripts = [];
+var styles = [];
+var sessionId;
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+var v="temp";
+v=request.getCookie("cookieval");
+var cookie="temp"
+if(v){
+var cookie=v.value;
+
+}else{
+print("redirecting");
+response.sendRedirect('https://52.74.66.119:9453/home/');
+}
+;
+//print(v.value);   
+
+var rxt = "JSON RXT Config Should go here";
+var log = new Log();
+var ws = require('ws');
+
+var addRxt = new ws.WSRequest();
+var options = new Array();
+options.useSOAP = 1.2;
+options.useWSA = 1.0;
+options.action = "urn:getVersion";
+var payload = null;
+var result;
+
+var payload = '<aut:loginWithRememberMeCookie xmlns:aut="http://authentication.services.core.carbon.wso2.org"><aut:cookie>'+cookie+'</aut:cookie></aut:loginWithRememberMeCookie>';
+
+var result;
+
+try {
+    addRxt.open(options, "https://52.74.66.119:9443/services/AuthenticationAdmin", false, "", "");
+    addRxt.send(payload);
+    result = addRxt.responseE4X;
+} catch (e) {
+    log.error(e.toString());
+}
+
+var path = "content/cookie/checkcookie.xml";
+
+   var file = new File(path);
+   file.open("w");
+   file.write(result);
+   file.close();
+   
+   return result;
+   
+}
+
+%>
+

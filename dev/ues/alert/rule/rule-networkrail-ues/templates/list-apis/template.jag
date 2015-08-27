@@ -1,0 +1,18 @@
+<% jagg.template("list-apis", function(inputs, outputs, jagg) { %>
+<div>
+    <h2>My APIs</h2>
+
+    <%
+    var i, api,apis = outputs.apis;
+
+    var length = apis.length;
+    for (i = 0; i < length; i++) {
+    api = apis[i];
+    %>
+    <Li><%=api.name%>-v<%=api.version%></Li>
+    <%}%>
+
+    </ul>
+
+</div>
+<% }); %>

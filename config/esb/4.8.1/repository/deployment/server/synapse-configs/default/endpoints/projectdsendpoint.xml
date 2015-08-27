@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoint xmlns="http://ws.apache.org/ns/synapse" name="projectdsendpoint">
+   <address uri="http://demo.bimaas.uk:9775/services/BIMaaS_Project_DS.SOAP12Endpoint/"/>
+</endpoint>

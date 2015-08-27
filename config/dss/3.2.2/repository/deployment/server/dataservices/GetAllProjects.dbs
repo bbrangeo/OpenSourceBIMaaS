@@ -1,0 +1,18 @@
+<data name="GetAllProjects" transports="http https local">
+   <config id="BIMaaS_MySql ">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://127.0.0.1:3306/bim_exchange</property>
+      <property name="username">root</property>
+      <property name="password">1qaz2wsx@</property>
+   </config>
+   <query id="GetAllProjects" useConfig="BIMaaS_MySql ">
+      <sql>select * from project as p JOIN project_rights as pr on p.poid=pr.poid where authz_user=:user</sql>
+      <result element="projects" rowName="project">
+         <element column="project_name" name="projectName" xsdType="string"/>
+      </result>
+      <param name="user" sqlType="STRING"/>
+   </query>
+   <operation name="GetAllProjects_OP">
+      <call-query href="GetAllProjects"/>
+   </operation>
+</data>

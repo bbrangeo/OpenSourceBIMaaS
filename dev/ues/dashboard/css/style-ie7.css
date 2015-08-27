@@ -1,0 +1,49 @@
+body{
+    background: #fff url(../images/back-normal.png) repeat-y left top;
+}
+#left{
+    width:251px;
+    background: transparent;
+}
+.footer-main{
+    margin-left:277px;
+}
+div.row-fluid div.login-content{
+    margin-left:250px;
+    background-color: #606;
+}
+.login-header{
+    margin-top:-25px;
+    background-color: #606;
+}
+div.content-data{
+    padding:10px 0;
+    border:solid 1px #ccc;
+}
+div.login-content div.content-data{
+    padding:10px 30px;
+}
+div.title-section{
+    background: #efefef;
+}
+div.form-search{
+    border:none;
+}
+.new-sub-menu-wizard div.wizard-number{
+    display: inline !important;
+    margin-right: 10px;
+}
+.new-sub-menu-wizard{
+    margin-top: 20px !important;
+}
+.logo-container {
+    width: 200px;
+    height: 120px;
+    background-image: url("../images/BIMaas-logo.png");
+}
+
+/* resize images */
+.logo-container img {
+    max-width:100%; 
+max-height:100%;
+}

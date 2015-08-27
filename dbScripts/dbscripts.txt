@@ -1,0 +1,17 @@
+CREATE TABLE checkin_status (checkin_status_id BIGINT NOT NULL AUTO_INCREMENT, poid VARCHAR(20), revision_id VARCHAR(20), file_name VARCHAR(260), reference_id VARCHAR(300), status VARCHAR(30), last_updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, info VARCHAR(50000), PRIMARY KEY (checkin_status_id));
+
+CREATE TABLE project_rights (project_rights_id BIGINT NOT NULL AUTO_INCREMENT, poid VARCHAR(20), authz_user VARCHAR(1000), created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (project_rights_id));
+
+CREATE TABLE project (project_id BIGINT NOT NULL AUTO_INCREMENT, poid VARCHAR(20), project_name VARCHAR(1000), parent_id VARCHAR(20), type VARCHAR(1000), latitude DOUBLE, longitude DOUBLE, geo_fence BLOB, created_by VARCHAR(1000), active_revision_id VARCHAR(20), created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (project_id));
+
+CREATE TABLE checkout (checkout_id BIGINT NOT NULL AUTO_INCREMENT, poid VARCHAR(20), revision_id VARCHAR(20), checked_out_by VARCHAR(1000), is_locked VARCHAR(1), last_updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (checkout_id));
+
+CREATE TABLE rule (rule_id BIGINT NOT NULL AUTO_INCREMENT, rule_name VARCHAR(1000), rule_desc VARCHAR(5000), PRIMARY KEY (rule_id));
+
+CREATE TABLE project_rule (project_rule_id BIGINT NOT NULL AUTO_INCREMENT, project_id BIGINT, rule_id BIGINT, is_active TINYINT(1) DEFAULT 1, PRIMARY KEY (project_rule_id));
+
+CREATE TABLE rule_property (rule_property_id BIGINT NOT NULL AUTO_INCREMENT, rule_id BIGINT,  property_name VARCHAR(1000), PRIMARY KEY (rule_property_id));
+
+CREATE TABLE rule_property_value (rule_property_value_id BIGINT NOT NULL AUTO_INCREMENT, project_rule_id BIGINT, rule_property_id BIGINT,  property_value VARCHAR(500), last_updated_timestamp TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (rule_property_value_id));
+
+CREATE TABLE chat_history (message_id BIGINT NOT NULL AUTO_INCREMENT, message VARCHAR(1000000), poid VARCHAR(20), user_id VARCHAR(20), user VARCHAR(1000), revision_id VARCHAR(20), posted_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (message_id));

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="UpdateOnIFCFileCheckinResponse"
+       transports="https http"
+       startOnLoad="true"
+       trace="disable">
+   <description/>
+   <target>
+      <inSequence>
+         <property name="messageType"
+                   value="application/xml"
+                   scope="axis2"
+                   type="STRING"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:getPoidFromCheckinStatusByStatus_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:status>$1</p:status>
+               </p:getPoidFromCheckinStatusByStatus_Op>
+            </format>
+            <args>
+               <arg value="QUEUED"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
+         <log level="full" category="DEBUG"/>
+         <property name="POID"
+                   expression="//*[local-name()='poid']"
+                   scope="default"
+                   type="STRING"/>
+         <property name="messageType"
+                   value="application/json"
+                   scope="axis2"
+                   type="STRING"/>
+         <payloadFactory media-type="json">
+            <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getProjectByPoid","parameters":{"poid":"$1"}},"token":"$2"}</format>
+            <args>
+               <arg evaluator="xml" expression="synapse:get-property('POID')"/>
+               <arg evaluator="xml"
+                    expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
+            </args>
+         </payloadFactory>
+         <log>
+            <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
+         </log>
+         <send>
+            <endpoint key="bimserverendpoint"/>
+         </send>
+      </inSequence>
+      <outSequence>
+         <log level="full"/>
+         <property name="messageType"
+                   value="application/json"
+                   scope="axis2"
+                   type="STRING"/>
+         <property name="LAST_REVISION_ID"
+                   expression="json-eval($.response.result.lastRevisionId)"
+                   scope="default"
+                   type="STRING"/>
+         <log>
+            <property name="REVISION_ID - " expression="get-property('LAST_REVISION_ID')"/>
+         </log>
+         <property name="messageType"
+                   value="application/xml"
+                   scope="axis2"
+                   type="STRING"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:updateCheckinStatus_Success_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:info>$1</p:info>
+                  <p:revisionId>$2</p:revisionId>
+               </p:updateCheckinStatus_Success_Op>
+            </format>
+            <args>
+               <arg value="File checkin successful"/>
+               <arg evaluator="xml" expression="get-property('LAST_REVISION_ID')"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
+      </outSequence>
+   </target>
+</proxy>

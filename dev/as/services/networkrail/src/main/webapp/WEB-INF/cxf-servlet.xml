@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+
+	<!-- Jackson Bean For JSON Provider -->
+	<!-- <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" 
+		/> -->
+
+
+	<!-- Beans -->
+	<bean id="DoorHeightRuleServiceBean"
+		class="com.bimaas.services.networkrail.rule.impl.IFCDoorHeightRuleServiceImpl" />
+	<!-- <bean id="ProjectManageBean" class="com.mitra.wso2.bim.services.impl.ProjectManageServiceImpl" 
+		/> <bean id="ProjectBean" class="com.mitra.wso2.bim.domain.Project" /> <bean 
+		id="FileManageBean" class="com.mitra.wso2.bim.services.impl.FileManageServiceImpl" 
+		/> <bean id="ProjectFileDTO" class="com.mitra.wso2.bim.dto.ProjectFileDTO" 
+		/> -->
+
+
+	<!-- Services -->
+	<jaxrs:server id="DoorHeightRuleService" address="/door-height-rule">
+		<jaxrs:serviceBeans>
+			<ref bean="DoorHeightRuleServiceBean" />
+		</jaxrs:serviceBeans>
+	</jaxrs:server>
+
+	<!-- jaxrs:server id="ProjectManagerService" address="/project"> <jaxrs:serviceBeans> 
+		<ref bean="ProjectManageBean" /> </jaxrs:serviceBeans> <jaxrs:providers> 
+		<ref bean="ProjectBean" /> </jaxrs:providers> </jaxrs:server -->
+
+	<!-- <jaxrs:server id="FileManageService" address="/file"> <jaxrs:serviceBeans> 
+		<ref bean="FileManageBean" /> </jaxrs:serviceBeans> <jaxrs:providers> <ref 
+		bean="ProjectFileDTO" /> </jaxrs:providers> </jaxrs:server> -->
+
+</beans>

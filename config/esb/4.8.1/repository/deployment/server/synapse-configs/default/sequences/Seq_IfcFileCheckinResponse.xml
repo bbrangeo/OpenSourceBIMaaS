@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" name="Seq_IfcFileCheckinResponse">
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="Seq_IfcFileCheckinResponse"
+          trace="disable">
    <property name="messageType"
              value="application/json"
              scope="axis2"
@@ -9,7 +11,45 @@
                 name="[BIM-EX_LOG] | Response"
                 expression="json-eval($.)"/>
    </log>
-   <class name="com.mitrai.bimexchange.CheckinIfcOutFlowMediator"/>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             name="RESPONSE_JSON_BODY"
+             expression="json-eval($.)"
+             scope="default"
+             type="STRING"/>
+   <class name="com.bimaas.mediators.CheckBimServerExceptionMediator"/>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           source="get-property('BIM_SERVER_EXCEPTION')"
+           regex="true">
+      <then>
+         <property name="messageType"
+                   value="application/xml"
+                   scope="axis2"
+                   type="STRING"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:updateCheckinStatus_Failed_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:originalJsonBody>$1</p:originalJsonBody>
+               </p:updateCheckinStatus_Failed_Op>
+            </format>
+            <args>
+               <arg evaluator="xml" expression="get-property('RESPONSE_JSON_BODY')"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
+      </then>
+      <else>
+         <log>
+            <property name="[BIM-EX_LOG]" value="sending to UpdateOnIFCFileCheckinResponse"/>
+         </log>
+         <send>
+            <endpoint>
+               <address uri="http://52.74.66.119:8284/services/UpdateOnIFCFileCheckinResponse"/>
+            </endpoint>
+         </send>
+      </else>
+   </filter>
    <sequence key="Seq_NotifyOnRules"/>
    <drop/>
 </sequence>

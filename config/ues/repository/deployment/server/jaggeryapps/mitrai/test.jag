@@ -1,0 +1,64 @@
+<%
+var scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+
+
+
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+
+//alert(getCookie("wso2.carbon.rememberme"));
+//alert(getCookie("JSESSIONID"));
+function setCookie(cname,cvalue,exdays) {
+alert("sdfsdf");
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    var path= "path=/";
+    var domain= "domain=www.google.lk";
+    
+   document.cookie = cname+"="+cvalue+"; "+expires; "+path; "+domain;
+
+//document.cookie =  "theme=" + encodeURIComponent("blue theme") +  "; max-age=" + 60*60*24*30 +  "; path=/; domain=google.com" ;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function checkCookie() {
+
+    var user=getCookie("a");
+    if (user != "") {
+        alert("Welcome again " + user);
+    } else {
+       user = prompt("Please enter your name:","");
+       if (user != "" && user != null) {
+           setCookie("a", user, 30);
+
+       }
+    }
+}
+
+</script>
+</head>
+<body onload="checkCookie()">
+
+asedfasef
+</body>
+</html>

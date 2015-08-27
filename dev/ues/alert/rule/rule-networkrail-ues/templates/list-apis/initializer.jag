@@ -1,0 +1,8 @@
+<%
+jagg.initializer("list-apis", {
+
+    preInitialize:function () {
+
+    }
+});
+%>

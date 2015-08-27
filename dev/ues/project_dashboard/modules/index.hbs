@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{include title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+<script>
+
+function auth(){
+
+
+function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    var domain="52.74.66.119";
+    var path="/";
+    document.cookie = cname+"="+cvalue+"; "+expires; "+domain; "+path;
+}
+
+var name=document.getElementById("un").value;
+var pw=document.getElementById("pw").value;
+alert(name+" "+pw);
+setCookie("username", "admin", 30);
+setCookie("password", "admin", 30);
+
+setCookie("username", name, 30);
+setCookie("password", pw, 30);
+
+
+</script>
+
+
+
+
+<link href="themes/htmlBlogAggregator/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+   
+    <link href="themes/htmlBlogAggregator/css/AdminLTE.min.css" rel="stylesheet">
+   
+
+   
+
+    {{css .}}
+   
+    {{code .}}
+</head>
+<body class="login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <a href="#" class="logo">
+          <!-- mini logo for sidebar mini 50x50 pixels -->
+          <!-- <span class="logo-mini"><img src="images/bim.png"></span> -->
+          <!-- logo for regular state and mobile devices -->
+           <span class="logo-lg"><img src="themes/htmlBlogAggregator/img/bimaas_logo.jpg"></span>
+        </a>
+      </div><!-- /.login-logo -->
+      <div class="login-box-body">
+<div class="alert alert-error" id="loginError" style="display:none">
+                           <span id="loginErrorSpan"></span>
+                       </div>
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        <form action="home.jag" method="get">
+          <div class="form-group has-feedback">
+            <input type="username" class="form-control" id="un" placeholder="User Name"/>
+            <span class="glyphicon glyphicon-user  form-control-feedback"></span>
+          </div>
+          <div class="form-group has-feedback">
+            <input type="password" class="form-control" id="pw" placeholder="Password"/>
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          </div>
+          <div class="row">
+            <div class="col-xs-8">    
+         
+  <!--   <div class="checkbox icheck">
+                <label>
+                  <input type="checkbox"> Remember Me
+                </label>
+              </div>  --> 
+
+                     
+            </div><!-- /.col -->
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat" onclick="auth()" >Sign In</button>
+            </div><!-- /.col -->
+          </div>
+        </form>
+
+        
+      <!--   <a href="#" class="text-center">Register a new membership</a> -->
+
+      </div><!-- /.login-box-body -->
+    </div><!-- /.login-box -->
+<!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<!--
+<script src="{{url "/home/themes/htmlBlogAggregator/plugins/jQuery/jQuery-2.1.4.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/bootstrap/js/bootstrap.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/fastclick/fastclick.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/themejs/js/app.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/sparkline/jquery.sparkline.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"}}"></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/jvectormap/jquery-jvectormap-world-mill-en.js"}}" type="text/javascript" ></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/slimScroll/jquery.slimscroll.min.js"}}" type="text/javascript" ></script>
+<script src="{{url "/themes/htmlBlogAggregator/plugins/chartjs/Chart.min.js"}}" type="text/javascript" ></script>
+-->
+<script src="themes/htmlBlogAggregator/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script src="themes/htmlBlogAggregator/bootstrap/js/bootstrap.min.js"></script>
+    {{js .}}
+</body>
+</html>

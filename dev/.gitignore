@@ -1,0 +1,9 @@
+target/
+
+.project
+.settings/
+.classpath
+bin/
+.DS_Store
+Thumbs.db
+outlier/mvdXMLChecker/

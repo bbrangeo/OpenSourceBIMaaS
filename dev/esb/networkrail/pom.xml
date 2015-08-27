@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.bimaas</groupId>
+		<artifactId>bimaas-esb</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<groupId>com.bimaas.esb.networkrail</groupId>
+	<artifactId>networkrail-esb</artifactId>
+
+	<packaging>jar</packaging>
+	<name>networkrail-esb</name>
+	<description></description>
+	<properties>
+		<CApp.type>lib/synapse/mediator</CApp.type>
+	</properties>
+
+	<dependencies>
+		<!-- for class mediator json transformations -->
+		<!-- <dependency> <groupId>org.json</groupId> <artifactId>json</artifactId> 
+			<version>20141113</version> </dependency> -->
+
+		<dependency>
+			<groupId>com.bimaas.foundation</groupId>
+			<artifactId>bimaas-foundation</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.bimaas.esb.rule.core</groupId>
+			<artifactId>rule-core-esb</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>ignore</checksumPolicy>
+			</releases>
+			<id>wso2-nexus</id>
+			<url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+				<checksumPolicy>ignore</checksumPolicy>
+			</releases>
+			<id>wso2-nexus</id>
+			<url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.4</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>bimrule</Bundle-SymbolicName>
+						<Bundle-Name>bimrule</Bundle-Name>
+						<Export-Package>com</Export-Package>
+						<DynamicImport-Package>*</DynamicImport-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<buildcommands>
+						<buildcommand>org.eclipse.jdt.core.javabuilder</buildcommand>
+					</buildcommands>
+					<projectnatures>
+						<projectnature>org.wso2.developerstudio.eclipse.artifact.mediator.project.nature</projectnature>
+						<projectnature>org.eclipse.jdt.core.javanature</projectnature>
+					</projectnatures>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

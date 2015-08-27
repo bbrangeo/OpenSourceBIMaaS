@@ -5,8 +5,8 @@
                   targetEndpoint="bimserverendpoint"
                   messageStore="JMSMessageStore">
    <parameter name="message.processor.reply.sequence">Seq_IfcFileCheckinResponse</parameter>
-   <parameter name="client.retry.interval">30000</parameter>
    <parameter name="max.delivery.attempts">1</parameter>
+   <parameter name="client.retry.interval">30000</parameter>
    <parameter name="interval">120000</parameter>
    <parameter name="non.retry.status.codes">304</parameter>
    <parameter name="message.processor.fault.sequence">ErrorSeq_IfcFileCheckinResponserSeq</parameter>

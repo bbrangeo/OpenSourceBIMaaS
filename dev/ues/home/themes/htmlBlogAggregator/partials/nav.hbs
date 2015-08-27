@@ -1,5 +1,135 @@
 <script>
 
+var createCORSRequest = function(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    // Most browsers.
+    xhr.open(method, url, true);
+  } else if (typeof XDomainRequest != "undefined") {
+    // IE8 & IE9
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    // CORS not supported.
+    xhr = null;
+  }
+  
+  xhr.setRequestHeader("Content-Type", 'application/json');
+  return xhr;
+};
+
+var createAsyncCORSRequest = function(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    // Most browsers.
+    xhr.open(method, url, false);
+  } else if (typeof XDomainRequest != "undefined") {
+    // IE8 & IE9
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    // CORS not supported.
+    xhr = null;
+  }
+  
+  xhr.setRequestHeader("Content-Type", 'application/json');
+  return xhr;
+};
+
+var load3dURLString = 'https://demo.bimaas.uk:9453/bs';
+var projectIds = [];
+var revisionIds = [];
+var gotProjectsFlag = false;
+
+var load3dURL = function(projectId){
+	//alert('one');
+	projectIds.push(projectId);
+	revisionIds.push('1');
+	var getAllProjectFor3dRequest = '{"request": {"method": "getSubProjectIds","parentId":"'+projectId+'", "userName":"jsmith@carbon.super" }}';
+   var getAllProjectFor3dUrl = 'https://demo.bimaas.uk:8247/bimaas-project/GetSubProjects';
+   var method = 'POST';
+   var getAllProjectFor3dXhr = createCORSRequest(method, getAllProjectFor3dUrl,true);
+
+	getAllProjectFor3dXhr.send(getAllProjectFor3dRequest);
+   getAllProjectFor3dXhr.onload = function()
+   {
+      // Success code goes here
+	  //alert('two');
+	  //alert(projectId);
+      var jsn = JSON.parse(getAllProjectFor3dXhr.response);
+      
+      if(jsn.projects == null){
+			var getAllProjectRequest = '{"request": {"method": "getAllProjects" }}';
+		   var url = 'https://demo.bimaas.uk:8247/bimaas-project/GetAllProjects';
+		   var method = 'POST';
+		   var xhr = createCORSRequest(method, url);
+
+			xhr.send(getAllProjectRequest);
+		   xhr.onload = function()
+		   {
+			  // Success code goes here
+			  var jsn = JSON.parse(xhr.response);
+
+			  $.each(jsn.response.result,
+				 function(i, v)
+				 {
+					if(v.oid == projectId){
+						revisionIds = [];
+						revisionIds.push(v.revisions[0]);
+						//alert("found");
+					}else{
+						//alert("not found");
+					}
+				 });
+				 load3dURLString += '/?' + 'projectId=' + projectIds.join(",") + '&' + 'revisionId=' + revisionIds.join(",");
+				load3dURLString = load3dURLString.replace(/,\s*$/, "");
+				console.log('projectId=' + projectIds);
+				console.log('revisionId=' + revisionIds);
+				$('#contwrap').html("<iframe src='"+load3dURLString+"'></iframe>");
+				
+				//load3dURLString = load3dURLString + '&' + 'revisionId=' + revisionIds.join(",");
+				//alert(load3dURLString);
+				console.log(load3dURLString);
+				//alert(load3dURLString);
+				projectIds =[];
+				revisionIds = [];
+				load3dURLString = 'https://demo.bimaas.uk:9453/bs';
+		   };
+
+		   xhr.onerror = function()
+		   {
+			  // Error code goes here.
+		   };
+	  }else{
+		$.each(jsn.projects.project,
+         function(i, v)
+         {
+            projectIds.push(v.poid);
+			revisionIds.push(v.activateRevisionId);
+         });
+		 
+		 load3dURLString += '/?' + 'projectId=' + projectIds.join(",") + '&' + 'revisionId=' + revisionIds.join(",");
+		load3dURLString = load3dURLString.replace(/,\s*$/, "");
+		console.log('projectId=' + projectIds);
+		console.log('revisionId=' + revisionIds);
+		$('#contwrap').html("<iframe src='"+load3dURLString+"'></iframe>");
+		
+		//load3dURLString = load3dURLString + '&' + 'revisionId=' + revisionIds.join(",");
+		//alert(load3dURLString);
+		console.log(load3dURLString);
+		//alert(load3dURLString);
+		projectIds =[];
+		revisionIds = [];
+		load3dURLString = 'https://demo.bimaas.uk:9453/bs';
+	  }
+   };
+
+   getAllProjectFor3dXhr.onerror = function()
+   {
+      // Error code goes here.
+   };
+
+}
 
 function loadAsPage(obj){
  var page=obj.href;
@@ -35,26 +165,35 @@ function goto(obj) {
     var page=obj.href;
 
 //alert("ds"+page);
-$('#contwrap').load('52.74.66.119:9453/bs/');
+$('#contwrap').load('demo.bimaas.uk:9453/bs/');
 
     return false;
 }
 
+function loadDashboard(){
+$('#contwrap').load('https://demo.bimaas.uk:9453/project_dashboard/');
+}
+
 function load3d(){
 <!-- $('#contwrap').load('https://52.74.66.119:9453/bs/'); -->
-$('#contwrap').html("<iframe src='https://52.74.66.119:9453/bs/'></iframe>");
+if(window.GLOBAL_ACTIVE_PROJECT_ID == '-1' || window.GLOBAL_ACTIVE_PROJECT_ID == undefined || window.GLOBAL_ACTIVE_PROJECT_ID == null){
+	alert('Please open a project before loading the 3D view.');
+	$('#contwrap').load('https:///demo.bimaas.uk:9453/project_dashboard/');
+}else{
+	load3dURL(window.GLOBAL_ACTIVE_PROJECT_ID);
+}
 }
 
 function loadRule(){
-$('#contwrap').load('https://52.74.66.119:9453/alert/rule/');
+$('#contwrap').load('https://demo.bimaas.uk:9453/alert/rule/');
 }
 
 function loadStat(){
-$('#contwrap').load('https://52.74.66.119:9453/stat/');
+$('#contwrap').load('https://demo.bimaas.uk:9453/stat/');
 }
 
 function loadAQ(){
-$('#contwrap').load('https://52.74.66.119:9453/asset_query/');
+$('#contwrap').load('https://demo.bimaas.uk:9453/asset_query/');
 }
 
 
@@ -62,16 +201,19 @@ $('#contwrap').load('https://52.74.66.119:9453/asset_query/');
 
 
 function loadx(){
-$('#contwrap').load('https://52.74.66.119:9453/bs/project_dashboard.jag');
+$('#contwrap').load('https://demo.bimaas.uk:9453/bs/project_dashboard.jag');
 
 }
 
 function loadProjectCreation(){
-$('#contwrap').load('https://52.74.66.119:9453/project-management/create/');
+$('#contwrap').load('https://demo.bimaas.uk:9453/project-management/create/');
 }
 
+
 function loadProjectList(){
-$('#contwrap').load('https://52.74.66.119:9453/project-management/list/');
+
+
+$('#contwrap').load('https://demo.bimaas.uk:9453/project-management/list/');
 }
 
 
@@ -90,8 +232,9 @@ function getCookie(cname) {
 
 function loadapi(){
 var cookie=getCookie("cookieval");
-//$('#contwrap').load('https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd');
-var url='https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd';
+//$('#contwrap').load('https://demo.bimaas.uk:9443/store/?ck='+cookie+'&abc=efd');
+var url='https://52.74.66.119:9443/store/apis/list';
+//var url='https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd';
 window.open(url,'_blank');
 }
 
@@ -140,7 +283,8 @@ window.open(url,'_blank');
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
-                <li class="active"><a href="project_dashboard.jag" onclick="return go(this);"><i class="fa fa-circle-o"></i> Project Dashboard</a></li>
+                <li class="active"><a href="#" onclick="loadDashboard();"><i class="fa fa-circle-o"></i> Project Dashboard</a></li>
+		<!--    -->
               </ul>
             </li>
 

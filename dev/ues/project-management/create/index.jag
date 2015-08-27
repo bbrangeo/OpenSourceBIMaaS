@@ -7,70 +7,31 @@ var url = 'http://' + process.getProperty('server.host') + ':' +process.getPrope
 %>
 
 
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 
-<script type="text/javascript">
-
-var createCORSRequest = function(method, url) {
-  var xhr = new XMLHttpRequest();
-  if ("withCredentials" in xhr) {
-    // Most browsers.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // IE8 & IE9
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-  return xhr;
-};
-
-var url = 'https://52.74.66.119:9451/mock-services-1.0.0/services/project/all';
-var method = 'POST';
-var xhr = createCORSRequest(method, url);
-
-xhr.onload = function() {
-  // Success code goes here
-var jsn = JSON.parse(xhr.response);
-var template = $('#parent_project_list_template').html();
-
-$('#parent_projects_container').html('').append("<option>None</option>");
-
-$.each(jsn.project, function(i, v) {
-      
-      x = template.replace(/{project_name}/g, v.projectName).replace(
-         /{project_id}/g, v.projectId);
-
-      // console.log(x);
-      //if(i == 2 ) { 
-      //   }
-      $('#parent_projects_container').append(x);
-   })
-};
-
-
-
-xhr.onerror = function() {
-  // Error code goes here.
-};
-
-xhr.send();
-
-</script>
+<script src="../project-management/create/js/project_create_services.js"></script>
 
 
 <script id="parent_project_list_template" type="text/template">
 	<option value={project_id}>{project_name}</option>
 </script>
 
+<script>
+$('#content')
+ .html("<li><img src='https:\/\/52.74.66.119:9453\/project_management\/loading.gif'></img> please wait</li>");
+
+</script>
+
+
 <!-- ============================ PROJECT CREATE =============================== -->
 
 <!-- Main content -->
 <section class="content">
+<div id="fail" align="center"><span style="color:red; " id="failedtext"></span> <br></div><br><br>
+
+
+
 	<div class="row">
 		<!-- left column -->
 		<div class="col-xs-12">
@@ -84,22 +45,22 @@ xhr.send();
 				<form class="form-horizontal">
 					<div class="box-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputEmail3">Project
+							<label class="col-sm-2 control-label" for="projectName">Project
 								Name</label>
 							<div class="col-sm-10">
-								<input type="text" placeholder="Email" id="inputEmail3"
+								<input type="text" placeholder="Project Name" id="projectName"
 									class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputPassword3">Description</label>
+							<label class="col-sm-2 control-label" for="projectDescription">Description</label>
 							<div class="col-sm-10">
-								<textarea placeholder="Your Description ..." rows="3"
+								<textarea id="projectDescription" placeholder="Your Description ..." rows="3"
 									class="form-control"></textarea>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputPassword3">Parent
+							<label class="col-sm-2 control-label" for="parent_projects_container">Parent
 								project</label>
 							<div class="col-sm-10">
 								<select id="parent_projects_container" class="form-control">
@@ -108,41 +69,41 @@ xhr.send();
 						</div>
 						<div class="form-group">
 							<label for="inputPassword3" class="col-sm-2 control-label">Project
-								Location</label> <label for="inputPassword3"
+								Location</label> <label for="longitude"
 								class="col-sm-1 control-label" style="text-align: left">Longtitude</label>
 							<div class="col-sm-4">
-								<input type="text" placeholder="Longtitude" id="inputEmail3"
+								<input type="text" placeholder="Longtitude" id="longitude"
 									class="form-control">
 							</div>
-							<label for="inputPassword3" class="col-sm-1 control-label"
+							<label for="latitude" class="col-sm-1 control-label"
 								style="text-align: left">Latitude</label>
 							<div class="col-sm-4">
-								<input type="text" placeholder="Latitude" id="inputEmail3"
+								<input type="text" placeholder="Latitude" id="latitude"
 									class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputPassword3">Project
+							<label class="col-sm-2 control-label" for="projectGEOFence">Project
 								GEO Fence</label>
 							<div class="col-sm-10">
 								<input type="text" placeholder="Project GEO Fence"
-									id="inputEmail3" class="form-control">
+									id="projectGEOFence" class="form-control">
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label" for="inputPassword3">Project
+							<label class="col-sm-2 control-label" for="projectType">Project
 								Type</label>
 							<div class="col-sm-10">
-								<select class="form-control">
+								<select id="projectType" class="form-control">
 									<option value="0">Construction</option>
 									<option value="1">Facility Management</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Project Logo</label>
+							<label class="col-sm-2 control-label" for="projectLogo">Project Logo</label>
 							<div class="col-sm-10">
-								<input type="file" id="exampleInputFile">
+								<input type="file" id="projectLogo">
 								<p class="help-block">Select your logo for the project</p>
 							</div>
 						</div>
@@ -150,7 +111,7 @@ xhr.send();
 					<!-- /.box-body -->
 					<div class="box-footer">
 						<button class="btn btn-default" type="submit">Cancel</button>
-						<button class="btn btn-info pull-right" type="submit">Add</button>
+						<button id="projectAddButton" class="btn btn-info pull-right" type="submit">Add</button>
 					</div>
 			
 			</div>

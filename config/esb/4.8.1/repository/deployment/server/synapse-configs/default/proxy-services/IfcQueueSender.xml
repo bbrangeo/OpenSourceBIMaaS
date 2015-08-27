@@ -7,7 +7,11 @@
    <description/>
    <target>
       <inSequence>
+         <log>
+            <property name="[BIM-EX_LOG]" value="IfcQueueSender InSequence Started"/>
+         </log>
          <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="ORIGINAL_REQUEST" expression="json-eval($.)"/>
          <log>
             <property name="[BIM-EX_LOG]" value="Sending ifc file to queue for processing"/>
             <property name="POID" expression="json-eval($.request.parameters.poid)"/>
@@ -18,26 +22,92 @@
                    expression="json-eval($.request.parameters.poid)"
                    scope="default"
                    type="STRING"/>
-         <class name="com.mitrai.bimexchange.CheckinIfcInFlowMediator">
-            <property name="operation" value="INSERT"/>
-            <property name="status" value="INIT"/>
-         </class>
+         <property name="IFC_FILE_NAME"
+                   expression="json-eval($.request.parameters.fileName)"
+                   scope="default"
+                   type="STRING"/>
+         <property name="IFC_REFERENCE_ID"
+                   expression="fn:concat(fn:concat(fn:concat(fn:concat(get-property('POID'),'_'), get-property('IFC_FILE_NAME')),'_'), synapse:get-property('SYSTEM_DATE', 'yyyyMMdd_HHmmss') )"
+                   scope="default"
+                   type="STRING"/>
+         <property name="messageType" value="application/xml" scope="axis2"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:InsertCheckinStatus_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:poid>$1</p:poid>
+                  <p:fileName>$2</p:fileName>
+                  <p:referenceId>$3</p:referenceId>
+                  <p:status>$4</p:status>
+               </p:InsertCheckinStatus_Op>
+            </format>
+            <args>
+               <arg evaluator="json" expression="$.request.parameters.poid"/>
+               <arg evaluator="json" expression="$.request.parameters.fileName"/>
+               <arg evaluator="xml" expression="get-property('IFC_REFERENCE_ID')"/>
+               <arg value="INIT"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
+         <payloadFactory media-type="json">
+            <format>$1</format>
+            <args>
+               <arg evaluator="xml" expression="synapse:get-property('ORIGINAL_REQUEST')"/>
+            </args>
+         </payloadFactory>
+         <log level="full">
+            <property name="[BIM-EX_LOG]" expression="json-eval($)"/>
+         </log>
          <property name="messageType" value="application/json" scope="axis2"/>
          <store messageStore="JMSMessageStore"/>
-         <class name="com.mitrai.bimexchange.CheckinIfcInFlowMediator">
-            <property name="operation" value="UPDATE"/>
-            <property name="status" value="QUEUED"/>
-         </class>
+         <property name="messageType" value="application/xml" scope="axis2"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:updateCheckinStatusById_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:status>$1</p:status>
+                  <p:referenceId>$2</p:referenceId>
+               </p:updateCheckinStatusById_Op>
+            </format>
+            <args>
+               <arg value="QUEUED"/>
+               <arg evaluator="xml" expression="get-property('IFC_REFERENCE_ID')"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
+         <property name="messageType" value="application/xml" scope="axis2"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:updateCheckout_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:isLocked>0</p:isLocked>
+                  <p:poid>$1</p:poid>
+                  <p:userName>isuru@carbon.super</p:userName>
+               </p:updateCheckout_Op>
+            </format>
+            <args>
+               <arg evaluator="xml" expression="get-property('POID')"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="modeldsendpoint"/>
+         </call>
          <loopback/>
       </inSequence>
       <outSequence>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <log>
+            <property name="[BIM-EX_LOG]" value="IfcQueueSender OutSequence Started"/>
+         </log>
          <payloadFactory media-type="json">
             <format>{"response":{"referenceId":"$1"}}</format>
             <args>
-               <arg evaluator="xml" expression="get-property('referenceId')"/>
+               <arg evaluator="xml" expression="get-property('IFC_REFERENCE_ID')"/>
             </args>
          </payloadFactory>
          <send/>
       </outSequence>
    </target>
+   <parameter name="serviceType">proxy</parameter>
 </proxy>

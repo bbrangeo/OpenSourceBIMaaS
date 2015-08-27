@@ -1,0 +1,127 @@
+<%
+var scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+
+
+include("includes/header.jag");
+%>
+   
+      
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+            Dashboard
+            <small>Control panel</small>
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">Dashboard</li>
+          </ol>
+        </section>
+        
+        
+        
+        
+
+       
+          
+          
+          
+          
+          
+          
+          <!-- Main row -->
+          <div class="row">
+            <!-- Left col -->
+            <section class="col-lg-7 connectedSortable">
+              <!-- Custom tabs (Charts with tabs)-->
+              <div class="nav-tabs-custom">
+                <!-- Tabs within a box -->
+                
+                <div class="tab-content no-padding">
+                  <!-- Morris chart - Sales -->
+                 
+                  <div class="chart tab-pane" id="sales-chart" style=""></div>
+                </div>
+              </div><!-- /.nav-tabs-custom -->
+
+              
+              
+              
+            
+              
+
+              
+              
+              
+              
+              
+              
+             
+              
+              
+              
+              
+              <div class="login-box">
+              
+              <!-- quick email widget -->
+              <div class="box box-info" align="center">
+                <div class="box-header">
+                  
+                  <h3 class="box-title">Login</h3>
+                  <!-- tools box -->
+                  <div class="pull-right box-tools">
+                    </div><!-- /. tools -->
+                </div>
+                  <div class="alert alert-error" id="loginError" style="display:none">
+                           <span id="loginErrorSpan"></span>
+                       </div>
+                <div class="box-body">
+                  <form action="login.jag" id="loginForm" autocomplete="off">
+                    <div class="form-group">
+                      <input type="text" id="username" autofocus="autofocus"   class="form-control" placeholder="User Name"/>
+                    </div>
+                    <div class="form-group">
+                      <input type="password" id="pass" class="form-control"  placeholder="Password"/>
+                    </div>
+                    <input type="hidden"  id="tenant" value="" />
+
+                  
+                </div>
+                <div class="box-footer clearfix">
+                  <button class="pull-right btn btn-default"    value="" >Send <i class="fa fa-arrow-circle-right"></i></button>
+                  
+                              
+                </div>
+</form>
+              </div>
+
+            
+ </div>
+
+
+
+
+             
+
+            </section><!-- right col -->
+          </div><!-- /.row (main row) -->
+
+        </section><!-- /.content -->
+      </div>
+
+<%
+include("includes/footer.jag");
+
+
+
+
+
+%>
+
+

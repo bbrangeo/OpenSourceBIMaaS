@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api xmlns="http://ws.apache.org/ns/synapse"
+     name="Internal"
+     context="/internal">
+   <resource methods="POST OPTIONS" url-mapping="/bim3d-getChatHistory">
+      <inSequence>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="STATUS" value="0" scope="default"/>
+         <filter source="json-eval($.request.method)" regex="getChatHistory">
+            <then>
+               <property name="POID" expression="json-eval($.request.poid)" scope="default"/>
+               <property name="START_MESSAGE"
+                         expression="json-eval($.request.startMessageId)"
+                         scope="default"/>
+               <property name="messageType" value="application/xml" scope="axis2"/>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:getChatHistory_Op xmlns:p="http://ws.wso2.org/dataservice">
+                        <p:poid>$1</p:poid>
+                        <p:startMessageId>$2</p:startMessageId>
+                     </p:getChatHistory_Op>
+                  </format>
+                  <args>
+                     <arg evaluator="xml" expression="synapse:get-property('POID')"/>
+                     <arg evaluator="xml" expression="synapse:get-property('START_MESSAGE')"/>
+                  </args>
+               </payloadFactory>
+               <send>
+                  <endpoint key="internaldsendpoint"/>
+               </send>
+               <log level="full"/>
+            </then>
+            <else>
+               <log>
+                  <property name="[BIM-EX_LOG]" value="Error in get chat history request"/>
+               </log>
+               <loopback/>
+            </else>
+         </filter>
+      </inSequence>
+      <outSequence>
+         <log>
+            <property name="GET_CHAT_HISTORY_RESPONSE" expression="/"/>
+         </log>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="Access-Control-Request-Headers"
+                   value="content-type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Headers"
+                   value="Authorization,Access-Control-Allow-Origin,Content-Type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Methods"
+                   value="GET,POST,PUT,DELETE,OPTIONS"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Origin"
+                   value="*"
+                   scope="transport"
+                   type="STRING"/>
+         <send/>
+      </outSequence>
+   </resource>
+   <resource methods="POST OPTIONS" url-mapping="/bim3d-insertToChatHistory">
+      <inSequence>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="STATUS" value="0" scope="default"/>
+         <filter source="json-eval($.request.method)" regex="insertToChatHistory">
+            <then>
+               <property name="POID" expression="json-eval($.request.poid)" scope="default"/>
+               <property name="messageType" value="application/xml" scope="axis2"/>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:insertToChatHistory_Op xmlns:p="http://ws.wso2.org/dataservice">
+                        <p:poid>$1</p:poid>
+                        <p:userId>$2</p:userId>
+                        <p:userName>$3</p:userName>
+                        <p:revisionId>$4</p:revisionId>
+                        <p:message>$5</p:message>
+                     </p:insertToChatHistory_Op>
+                  </format>
+                  <args>
+                     <arg evaluator="json" expression="$.request.poid"/>
+                     <arg evaluator="json" expression="$.request.userId"/>
+                     <arg evaluator="json" expression="$.request.userName"/>
+                     <arg evaluator="json" expression="$.request.revisionId"/>
+                     <arg evaluator="json" expression="$.request.message"/>
+                  </args>
+               </payloadFactory>
+               <send>
+                  <endpoint key="internaldsendpoint"/>
+               </send>
+               <log level="full"/>
+            </then>
+            <else>
+               <log>
+                  <property name="[BIM-EX_LOG]" value="Error in get caht history request"/>
+               </log>
+               <loopback/>
+            </else>
+         </filter>
+      </inSequence>
+      <outSequence>
+         <log>
+            <property name="GET_CHAT_HISTORY_RESPONSE" expression="/"/>
+         </log>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="Access-Control-Request-Headers"
+                   value="content-type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Headers"
+                   value="Authorization,Access-Control-Allow-Origin,Content-Type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Methods"
+                   value="GET,POST,PUT,DELETE,OPTIONS"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Origin"
+                   value="*"
+                   scope="transport"
+                   type="STRING"/>
+         <send/>
+      </outSequence>
+   </resource>
+</api>

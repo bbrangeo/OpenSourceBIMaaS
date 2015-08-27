@@ -2,9 +2,10 @@
 <api xmlns="http://ws.apache.org/ns/synapse"
      name="BIMaaSProject"
      context="/bimaas-project">
-   <resource methods="OPTIONS POST" url-mapping="/CreateProject">
+   <resource methods="POST OPTIONS" url-mapping="/CreateProject">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="STATUS" value="0" scope="default"/>
          <filter source="json-eval($.request.method)"
                  regex="createProject|createSubProject">
             <then>
@@ -37,30 +38,35 @@
                          expression="json-eval($.request.geoFence)"
                          scope="default"
                          type="STRING"/>
+               <property name="TYPE"
+                         expression="json-eval($.request.type)"
+                         scope="default"
+                         type="STRING"/>
                <filter source="json-eval($.request.method)" regex="createProject">
                   <then>
                      <payloadFactory media-type="json">
-                        <format>{"request":{"interface":"org.buildingsmart.bimsie1.Bimsie1ServiceInterface","method":"addProject","parameters":{"projectName":"$1","schema":"$2"}}}</format>
+                        <format>{"request":{"interface":"org.buildingsmart.bimsie1.Bimsie1ServiceInterface","method":"addProject","parameters":{"projectName":"$1","schema":"$2"}},"token":"$3"}</format>
                         <args>
                            <arg evaluator="json" expression="$.request.projectName"/>
                            <arg evaluator="json" expression="$.request.schema"/>
+                           <arg evaluator="xml"
+                                expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
                         </args>
                      </payloadFactory>
                   </then>
                   <else>
                      <payloadFactory media-type="json">
-                        <format>{"request":{"interface":"org.buildingsmart.bimsie1.Bimsie1ServiceInterface","method":"addProjectAsSubProject","parameters":{"projectName":"$1","parentPoid":"$2","schema":"$3"}}}</format>
+                        <format>{"request":{"interface":"org.buildingsmart.bimsie1.Bimsie1ServiceInterface","method":"addProjectAsSubProject","parameters":{"projectName":"$1","parentPoid":"$2","schema":"$3"}},"token":"$4"}</format>
                         <args>
                            <arg evaluator="json" expression="$.request.projectName"/>
                            <arg evaluator="json" expression="$.request.parentId"/>
                            <arg evaluator="json" expression="$.request.schema"/>
+                           <arg evaluator="xml"
+                                expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
                         </args>
                      </payloadFactory>
                   </else>
                </filter>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -76,37 +82,114 @@
                   <format>{"error":"create project request error", "error-message":"only create project requests are allowed to invoke through this api endpoint"}</format>
                   <args/>
                </payloadFactory>
-               <respond/>
+               <property name="STATUS" value="1" scope="default"/>
+               <loopback/>
             </else>
          </filter>
       </inSequence>
       <outSequence>
+         <property name="messageType" value="application/json" scope="axis2"/>
          <log>
             <property name="[BIM-EX_LOG]"
                       value="Response recieved to out sequence from bim server"/>
             <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
          </log>
+         <class name="com.bimaas.mediators.BimserverResponseErrorCheckerMediator"/>
+         <filter source="get-property('STATUS')" regex="0">
+            <then>
+               <property name="POID"
+                         expression="json-eval($.response.result.oid)"
+                         scope="default"/>
+               <property name="messageType" value="application/xml" scope="axis2"/>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:createProject_Op xmlns:p="http://ws.wso2.org/dataservice/createProject_query">
+                        <p:poid>$1</p:poid>
+                        <p:projectName>$2</p:projectName>
+                        <p:parentId>$3</p:parentId>
+                        <p:latitude>$4</p:latitude>
+                        <p:longitude>$5</p:longitude>
+                        <p:userName>$6</p:userName>
+                        <p:type>$7</p:type>
+                     </p:createProject_Op>
+                  </format>
+                  <args>
+                     <arg evaluator="xml" expression="synapse:get-property('POID')"/>
+                     <arg evaluator="xml" expression="synapse:get-property('PROJECT_NAME')"/>
+                     <arg evaluator="xml" expression="synapse:get-property('PARENT_POID')"/>
+                     <arg evaluator="xml" expression="synapse:get-property('LATITUDE')"/>
+                     <arg evaluator="xml" expression="synapse:get-property('LONGITUDE')"/>
+                     <arg value="jsmith@carbon.super"/>
+                     <arg evaluator="xml" expression="synapse:get-property('TYPE')"/>
+                  </args>
+               </payloadFactory>
+               <log level="full">
+                  <property name="[BIMaaS_LOG]" value="____________Updating project table."/>
+               </log>
+               <call>
+                  <endpoint key="projectdsendpoint"/>
+               </call>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:createProjectRights_Op xmlns:p="http://ws.wso2.org/dataservice/createProjectRights_query">
+                        <p:poid>$1</p:poid>
+                        <p:userName>$2</p:userName>
+                     </p:createProjectRights_Op>
+                  </format>
+                  <args>
+                     <arg evaluator="xml" expression="synapse:get-property('POID')"/>
+                     <arg value="jsmith@carbon.super"/>
+                  </args>
+               </payloadFactory>
+               <log level="full">
+                  <property name="[BIMaaS_LOG]" value="____________Updating project rights table."/>
+               </log>
+               <call>
+                  <endpoint key="projectdsendpoint"/>
+               </call>
+               <property name="messageType"
+                         value="application/json"
+                         scope="axis2"
+                         type="STRING"/>
+            </then>
+            <else/>
+         </filter>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="Access-Control-Request-Headers"
+                   value="content-type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Headers"
+                   value="Authorization,Access-Control-Allow-Origin,X-Requested-With, Content-Type, Accept"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Methods"
+                   value="GET,POST,PUT,DELETE,OPTIONS"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Origin"
+                   value="*"
+                   scope="transport"
+                   type="STRING"/>
          <send/>
       </outSequence>
    </resource>
    <resource methods="OPTIONS POST" url-mapping="/GetProjectById">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectById">
             <then>
                <log separator=",">
                   <property name="[BIM-EX_LOG]" value="Get Project By Id"/>
+                  <property name="[BIMaaS_LOG]"
+                            value="___________No need to check is accessible coz only accessible projects are listed________"/>
                </log>
                <payloadFactory media-type="json">
-                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getProjectByPoid","parameters":{"poid":"$1"}}}</format>
+                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getProjectByPoid","parameters":{"poid":"$1"}},"token":"$2"}</format>
                   <args>
                      <arg evaluator="json" expression="$.request.projectId"/>
+                     <arg evaluator="xml"
+                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
                   </args>
                </payloadFactory>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -122,6 +205,7 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
@@ -129,38 +213,88 @@
       <outSequence>
          <log>
             <property name="[BIM-EX_LOG]"
-                      value="Response recieved to out sequence from bim server"/>
+                      value="Response recieved to out sequence Get Project By Id"/>
             <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
+            <property name="[BIM-EX_LOG]" expression="json-eval($.response.result.oid)"/>
          </log>
+         <property name="GET_PROJECT_BY_ID_RESPONSE"
+                   expression="json-eval($.response.result)"
+                   scope="default"
+                   type="STRING"/>
+         <property name="POID" expression="json-eval($.response.result.oid)"/>
+         <property name="messageType" value="application/xml" scope="axis2"/>
+         <payloadFactory media-type="xml">
+            <format>
+               <p:getCoordinatesByProjectId_Op xmlns:p="http://ws.wso2.org/dataservice">
+                  <p:poid>$1</p:poid>
+               </p:getCoordinatesByProjectId_Op>
+            </format>
+            <args>
+               <arg evaluator="xml" expression="synapse:get-property('POID')"/>
+            </args>
+         </payloadFactory>
+         <call>
+            <endpoint key="projectdsendpoint"/>
+         </call>
+         <property name="latitude"
+                   expression="//*[local-name()='latitude']"
+                   scope="default"
+                   type="STRING"/>
+         <property name="longitude"
+                   expression="//*[local-name()='longitude']"
+                   scope="default"
+                   type="STRING"/>
+         <log>
+            <property name="LATITUDE" expression="get-property('latitude')"/>
+            <property name="LONGITUDE" expression="get-property('longitude')"/>
+         </log>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <payloadFactory media-type="json">
+            <format>{"response":{"result":$1,"latitude":"$2","longitude":"$3"}}</format>
+            <args>
+               <arg evaluator="xml"
+                    expression="synapse:get-property('GET_PROJECT_BY_ID_RESPONSE')"/>
+               <arg evaluator="xml" expression="synapse:get-property('latitude')"/>
+               <arg evaluator="xml" expression="synapse:get-property('longitude')"/>
+            </args>
+         </payloadFactory>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="Access-Control-Request-Headers"
+                   value="content-type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Headers"
+                   value="Authorization,Access-Control-Allow-Origin,X-Requested-With, Content-Type, Accept"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Methods"
+                   value="GET,POST,PUT,DELETE,OPTIONS"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Origin"
+                   value="*"
+                   scope="transport"
+                   type="STRING"/>
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST" url-mapping="/GetProjectsByPartialName">
+   <resource methods="POST OPTIONS" url-mapping="/GetProjectsByPartialName">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectsByPartialName">
             <then>
                <log separator=",">
-                  <property name="[BIM-EX_LOG] Authorization Header"
-                            expression="$trp:Authorization"/>
                   <property name="[BIM-EX_LOG]" value="Get Projects By Partial Name"/>
                </log>
-               <property name="AUTHZ_USER_TOKEN"
-                         expression="$trp:Authorization"
-                         scope="default"
-                         type="STRING"/>
                <property name="PROJECT_PARTIAL_NAME"
                          expression="json-eval($.request.projectPartialName)"
                          scope="default"
                          type="STRING"/>
                <payloadFactory media-type="json">
-                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"                  Projects","parameters":{"onlyTopLevel":"false","onlyActive":"false"}}}</format>
-                  <args/>
+                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getAllProjects","parameters":{"onlyTopLevel":"false","onlyActive":"false"}},"token":"$1"}</format>
+                  <args>
+                     <arg evaluator="xml"
+                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
+                  </args>
                </payloadFactory>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -176,34 +310,36 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
       </inSequence>
       <outSequence>
-         <class name="com.mitrai.bimexchange.FilterProjectsByNameRegexMediator"/>
-         <log>
-            <property name="[BIM-EX_LOG]"
-                      value="Response recieved to out sequence from bim server"/>
-            <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
-         </log>
+         <filter source="get-property('STATUS')" regex="0">
+            <then>
+               <log>
+                  <property name="[BIMaaS_LOG]"
+                            value="__________________________Search and filter projects by user"/>
+                  <property name="[BIM-EX_LOG]"
+                            value="Response recieved to out sequence get projects by partial name"/>
+                  <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
+               </log>
+            </then>
+            <else/>
+         </filter>
          <send/>
       </outSequence>
    </resource>
-   <resource methods="POST OPTIONS" url-mapping="/UpdateProject">
+   <resource methods="OPTIONS POST" url-mapping="/UpdateProject">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="updateProject">
             <then>
                <log separator=",">
-                  <property name="[BIM-EX_LOG] Authorization Header"
-                            expression="$trp:Authorization"/>
                   <property name="[BIM-EX_LOG]" value="Update Project"/>
                </log>
-               <property name="AUTHZ_USER_TOKEN"
-                         expression="$trp:Authorization"
-                         scope="default"
-                         type="STRING"/>
                <property name="POID"
                          expression="json-eval($.request.projectId)"
                          scope="default"
@@ -220,7 +356,10 @@
                          expression="json-eval($.request.geoFence)"
                          scope="default"
                          type="STRING"/>
-               <class name="com.mitrai.bimexchange.UpdateBimExchangeMediator"/>
+               <log>
+                  <property name="[BIMaaS_LOG]"
+                            value="__________________________Update the project details"/>
+               </log>
                <loopback/>
             </then>
             <else>
@@ -231,6 +370,7 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
@@ -239,24 +379,25 @@
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST" url-mapping="/DeactivateProject">
+   <resource methods="POST OPTIONS" url-mapping="/DeactivateProject">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="deactivateProject">
             <then>
                <log separator=",">
+                  <property name="[BIMaaS_LOG]"
+                            value="__________________________Check the user has rights if not respond"/>
                   <property name="[BIM-EX_LOG]" value="Deactivate Project"/>
                </log>
                <payloadFactory media-type="json">
-                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"deleteProject","parameters":{"poid":"$1"}}}</format>
+                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"deleteProject","parameters":{"poid":"$1"}},"token":"$2"}</format>
                   <args>
                      <arg evaluator="json" expression="$.request.projectId"/>
+                     <arg evaluator="xml"
+                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
                   </args>
                </payloadFactory>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -272,6 +413,7 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
@@ -279,30 +421,31 @@
       <outSequence>
          <log>
             <property name="[BIM-EX_LOG]"
-                      value="Response recieved to out sequence from bim server"/>
+                      value="Response recieved to out sequence deactivate project"/>
             <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
          </log>
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST" url-mapping="/ActivateProject">
+   <resource methods="POST OPTIONS" url-mapping="/ActivateProject">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="activateProject">
             <then>
                <log separator=",">
+                  <property name="[BIMaaS_LOG]"
+                            value="__________________________Check the user has rights if not respond"/>
                   <property name="[BIM-EX_LOG]" value="Activate Project"/>
                </log>
                <payloadFactory media-type="json">
-                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"undeleteProject","parameters":{"poid":"$1"}}}</format>
+                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"undeleteProject","parameters":{"poid":"$1"}},"token":"$2"}</format>
                   <args>
                      <arg evaluator="json" expression="$.request.projectId"/>
+                     <arg evaluator="xml"
+                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
                   </args>
                </payloadFactory>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -318,6 +461,7 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
@@ -325,20 +469,24 @@
       <outSequence>
          <log>
             <property name="[BIM-EX_LOG]"
-                      value="Response recieved to out sequence from bim server"/>
+                      value="Response recieved to out sequence activate project"/>
             <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
          </log>
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST"
-             protocol="https"
-             url-mapping="/GetAllProjects">
+   <resource methods="POST OPTIONS" url-mapping="/GetAllProjects">
       <inSequence>
          <property name="messageType" value="application/json" scope="axis2"/>
-         <log level="full"/>
+         <log level="full">
+            <property name="[BIMaaS_LOG]_________*******________" expression="json-eval($)"/>
+         </log>
          <filter source="json-eval($.request.method)" regex="getAllProjects">
             <then>
+               <property name="STATUS" value="0" scope="default"/>
+               <log>
+                  <property name="[BIMaaS_LOG]" value="_____________Users projects_____________"/>
+               </log>
                <log separator=",">
                   <property name="[BIM-EX_LOG]" value="Getting all projects"/>
                </log>
@@ -350,7 +498,7 @@
                   </args>
                </payloadFactory>
                <log>
-                  <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
+                  <property name="[BIMaaS_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
                <send>
                   <endpoint key="bimserverendpoint"/>
@@ -364,17 +512,60 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <loopback/>
             </else>
          </filter>
-         <log/>
       </inSequence>
       <outSequence>
+         <property name="messageType" value="application/json" scope="axis2"/>
+         <property name="ALL_PROJECTS" expression="json-eval($.)"/>
+         <filter source="get-property('STATUS')" regex="0">
+            <then>
+               <log>
+                  <property name="[BIM-EX_LOG]"
+                            value="Response recieved to out sequence from bim server"/>
+                  <property name="[BIM-EX_LOG]" expression="get-property('ALL_PROJECTS')"/>
+               </log>
+               <property name="messageType" value="application/xml" scope="axis2"/>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:getAllProjectsByUser_op xmlns:p="http://ws.wso2.org/dataservice">
+                        <p:userName>$1</p:userName>
+                     </p:getAllProjectsByUser_op>
+                  </format>
+                  <args>
+                     <arg value="jsmith@carbon.super"/>
+                  </args>
+               </payloadFactory>
+               <log>
+                  <property name="[BIMaaS_LOG]"
+                            value="_____________Filter projects by user_____________"/>
+               </log>
+               <call>
+                  <endpoint key="projectdsendpoint"/>
+               </call>
+               <property name="ALLOWED_PROJECTS" expression="/"/>
+               <log level="full">
+                  <property name="_________*********___________*********________" expression="/"/>
+               </log>
+               <property name="messageType" value="application/json" scope="axis2"/>
+               <payloadFactory media-type="json">
+                  <format>$1</format>
+                  <args>
+                     <arg evaluator="xml" expression="synapse:get-property('ALL_PROJECTS')"/>
+                  </args>
+               </payloadFactory>
+               <class name="com.bimaas.mediators.FilterAllowedProjectsMediator"/>
+            </then>
+            <else/>
+         </filter>
+         <property name="messageType" value="application/json" scope="axis2"/>
          <property name="Access-Control-Request-Headers"
                    value="content-type"
                    scope="transport"/>
          <property name="Access-Control-Allow-Headers"
-                   value="Authorization,Access-Control-Allow-Origin,Content-Type"
+                   value="Authorization,Access-Control-Allow-Origin,X-Requested-With, Content-Type, Accept"
                    scope="transport"/>
          <property name="Access-Control-Allow-Methods"
                    value="GET,POST,PUT,DELETE,OPTIONS"
@@ -383,28 +574,18 @@
                    value="*"
                    scope="transport"
                    type="STRING"/>
-         <log>
-            <property name="[BIM-EX_LOG]"
-                      value="Response recieved to out sequence from bim server"/>
-            <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
-         </log>
          <send/>
       </outSequence>
    </resource>
-   <resource methods="OPTIONS POST" url-mapping="/GetProjectsByGeoLocation">
+   <resource methods="POST OPTIONS" url-mapping="/GetProjectsByGeoLocation">
       <inSequence>
+         <property name="STATUS" value="0" scope="default"/>
          <property name="messageType" value="application/json" scope="axis2"/>
          <filter source="json-eval($.request.method)" regex="getProjectsByGeoLocation">
             <then>
                <log separator=",">
-                  <property name="[BIM-EX_LOG] Authorization Header"
-                            expression="$trp:Authorization"/>
                   <property name="[BIM-EX_LOG]" value="Get Projects By Geo Location"/>
                </log>
-               <property name="AUTHZ_USER_TOKEN"
-                         expression="$trp:Authorization"
-                         scope="default"
-                         type="STRING"/>
                <property name="ACCURACY"
                          expression="json-eval($.request.locationAccuracy)"
                          scope="default"
@@ -418,13 +599,12 @@
                          scope="default"
                          type="STRING"/>
                <payloadFactory media-type="json">
-                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getAllProjects","parameters":{"onlyTopLevel":"false","onlyActive":"false"}}}</format>
-                  <args/>
+                  <format>{"request":{"interface":"Bimsie1ServiceInterface","method":"getAllProjects","parameters":{"onlyTopLevel":"false","onlyActive":"false"}},"token":"$1"}</format>
+                  <args>
+                     <arg evaluator="xml"
+                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"/>
+                  </args>
                </payloadFactory>
-               <property name="BIM_SERVER_TOKEN"
-                         expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
-                         scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -440,15 +620,78 @@
                   <format>{"error":"access project request error", "error-message":"error with the request"}</format>
                   <args/>
                </payloadFactory>
+               <property name="STATUS" value="1" scope="default"/>
                <respond/>
             </else>
          </filter>
       </inSequence>
       <outSequence>
-         <class name="com.mitrai.bimexchange.FilterProjectsByLatLongMediator"/>
          <log>
+            <property name="[BIMaaS_LOG]"
+                      value="__________________________Filter projects by geolocation"/>
             <property name="[BIM-EX_LOG]"
                       value="Response recieved to out sequence from bim server"/>
+            <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
+         </log>
+         <send/>
+      </outSequence>
+   </resource>
+   <resource methods="POST OPTIONS" url-mapping="/GetSubProjects">
+      <inSequence>
+         <filter source="json-eval($.request.method)" regex="getSubProjectIds">
+            <then>
+               <log>
+                  <property name="Get sub project Ids" expression="json-eval($.)"/>
+               </log>
+               <property name="messageType" value="application/xml" scope="axis2"/>
+               <payloadFactory media-type="xml">
+                  <format>
+                     <p:getSubProjectsByParentAndUser_op xmlns:p="http://ws.wso2.org/dataservice">
+                        <p:parentId>$1</p:parentId>
+                        <p:userName>$2</p:userName>
+                     </p:getSubProjectsByParentAndUser_op>
+                  </format>
+                  <args>
+                     <arg evaluator="json" expression="$.request.parentId"/>
+                     <arg evaluator="json" expression="$.request.userName"/>
+                  </args>
+               </payloadFactory>
+               <send>
+                  <endpoint key="projectdsendpoint"/>
+               </send>
+            </then>
+            <else>
+               <log>
+                  <property name="[BIM-EX_LOG]" value="Error in Get sub project Ids request"/>
+               </log>
+               <payloadFactory media-type="json">
+                  <format>{"error":"Get sub projects request error", "error-message":"only getSubProjects requests are allowed to invoke through this api call"}</format>
+                  <args/>
+               </payloadFactory>
+               <loopback/>
+            </else>
+         </filter>
+      </inSequence>
+      <outSequence>
+         <property name="messageType"
+                   value="application/json"
+                   scope="axis2"
+                   type="STRING"/>
+         <property name="Access-Control-Request-Headers"
+                   value="content-type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Headers"
+                   value="Authorization,Access-Control-Allow-Origin,Content-Type"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Methods"
+                   value="GET,POST,PUT,DELETE,OPTIONS"
+                   scope="transport"/>
+         <property name="Access-Control-Allow-Origin"
+                   value="*"
+                   scope="transport"
+                   type="STRING"/>
+         <log>
+            <property name="[BIM-EX_LOG]" value="Response recieved to out sequence"/>
             <property name="[BIM-EX_LOG]" expression="json-eval($.)"/>
          </log>
          <send/>

@@ -21,7 +21,9 @@
 	<modules>
 		<module>core</module>
 		<module>internal</module>
+		<module>networkrail</module>
 		<module>mock-services</module>
+        <module>outlier/mvd-checker</module>
 	</modules>
 	<dependencies>
 		<dependency>

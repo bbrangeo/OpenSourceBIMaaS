@@ -24,8 +24,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <class name="com.mitrai.bimexchange.CheckoutStatusMediator">
                   <property name="operation" value="UPDATE"/>
                   <property name="isLocked" value="0"/>
@@ -94,8 +93,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <class name="com.mitrai.bimexchange.CheckoutStatusMediator">
                   <property name="operation" value="UPDATE"/>
                   <property name="isLocked" value="0"/>
@@ -154,8 +152,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <class name="com.mitrai.bimexchange.CheckoutStatusMediator">
                   <property name="operation" value="UPDATE"/>
                   <property name="isLocked" value="0"/>
@@ -236,8 +233,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <class name="com.mitrai.bimexchange.CheckoutStatusMediator">
                   <property name="operation" value="UPDATE"/>
                   <property name="isLocked" value="0"/>
@@ -301,8 +297,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -387,8 +382,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <log>
                   <property name="[BIM-EX_LOG] | TRANSFORMED_JSON_BODY" expression="json-eval($.)"/>
                </log>
@@ -472,8 +466,7 @@
                <property name="BIM_SERVER_TOKEN"
                          expression="synapse:get-property('LE_BIM_SERVER_TOKEN')"
                          scope="default"/>
-               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator">
-               </class>
+               <class name="com.mitrai.bimexchange.BimServerAuthorizationMediator"/>
                <class name="com.mitrai.bimexchange.CheckoutStatusMediator">
                   <property name="operation" value="INSERT"/>
                   <property name="isLocked" value="1"/>

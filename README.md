@@ -5,7 +5,7 @@ BIMaaS platform is built on top of WSO2 product stack. BIMServer and BIMSurfer a
 See full features of BIMaaS platform in the BIMaaS official web page [www.bimaas.uk].
 
 #How to build from source
-As BIMaaS platform utilises WSO2 middleware stack, a user must initially download the required WSO2 products (IS, AM, MB, ESB, AS and UES) from [http://wso2.com/products/] and replace the configuration file which can be found in config/{product}/{path-to-each-files} with the corresponding product folder. Consequently the user is required to navigate to dev/ folder and build the entire project using "maven" and place the built artifacts (jar/war) inside each product {product}/repository/components/lib folder.
+As BIMaaS platform utilises WSO2 middleware stack, a user must initially download the required WSO2 products (IS, AM, MB, ESB, AS, UES and DSS) from [http://wso2.com/products/] and replace the configuration file which can be found in config/{product}/{path-to-each-files} with the corresponding product folder. Consequently the user is required to navigate to dev/ folder and build the entire project using "maven" and place the built artifacts (jar/war) inside each product {product}/repository/components/lib folder.
 
 For more details please visit [https://github.com/MitraInnovationRepo/OpenSourceBIMaaS/wiki]
 

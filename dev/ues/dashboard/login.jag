@@ -1,0 +1,104 @@
+<%
+var scripts = [];
+var styles = [];
+var sessionId;
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+
+var rxt = "JSON RXT Config Should go here";
+var log = new Log();
+var ws = require('ws');
+
+var addRxt = new ws.WSRequest();
+var options = new Array();
+options.useSOAP = 1.2;
+options.useWSA = 1.0;
+options.action = "urn:getVersion";
+var payload = null;
+var result;
+
+var payload = '<aut:loginWithRememberMeOption xmlns:aut="http://authentication.services.core.carbon.wso2.org"><aut:username>isuru</aut:username><aut:password>1qaz2wsx@</aut:password><aut:remoteAddress>52.74.66.119</aut:remoteAddress></aut:loginWithRememberMeOption>';
+
+
+
+var result;
+
+try {
+    addRxt.open(options, "https://52.74.66.119:9443/services/AuthenticationAdmin", false, "", "");
+    addRxt.send(payload);
+    result = addRxt.responseE4X;
+} catch (e) {
+    log.error(e.toString());
+print("Error with cookie response "+e.toString());
+}
+
+
+var path = "/cookie.xml";
+
+  var file = new File(path);
+   file.open("w");
+   file.write(result);
+   file.close();
+
+%>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+   // alert("yesaaa");
+	var tmpSubject, tmpDate, tmpThumb;
+	$.ajax({
+            url: '/mitrai/cookie.xml',
+            type: 'GET', 
+            dataType: 'xml',
+            success: function(returnedXMLResponse){
+                $("ns\\:loginWithRememberMeOptionResponse, loginWithRememberMeOptionResponse", returnedXMLResponse).each(function(){
+                     tmpSubject = $("ax2129\\:authenticated, authenticated", this).text();
+                     tmpDate = $("ax2129\\:maxAge, maxAge", this).text();
+                     tmpThumb = $("ax2129\\:value, value", this).text();
+
+                    console.log(tmpSubject + '' + tmpDate + ' ' + tmpThumb );
+//alert(tmpSubject);
+//alert(tmpDate);
+//alert("second"+tmpThumb);
+function setCookie(cname,cvalue,exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires=" + d.toGMTString();
+    document.cookie = cname+"="+cvalue+"; "+expires;
+}
+
+setCookie("cookieval", tmpThumb, 30);
+
+
+
+
+			if(tmpSubject){
+				//alert("yes");
+				//location.replace('https://52.74.66.119:9453/mitrai/dashboard.jag?ck='+tmpThumb+'&abc=efd');
+				location.replace('https://52.74.66.119:9453/mitrai/dashboard.jag');
+			}else{
+				alert("Enter correct username and password ...");
+			}
+
+
+
+                })
+            }  
+        }); 
+	
+      
+    
+});
+
+
+
+
+
+
+</script>
+
+

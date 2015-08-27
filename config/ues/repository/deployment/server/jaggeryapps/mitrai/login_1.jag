@@ -1,0 +1,244 @@
+
+<%
+var scripts = [];
+var styles = [];
+var sessionId;
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+%>
+<input type="text" id="AuthSessionval" value="<%= sessionId %>"/>
+
+<%
+
+var rxt = "JSON RXT Config Should go here";
+var log = new Log();
+var ws = require('ws');
+
+var addRxt = new ws.WSRequest();
+var options = new Array();
+options.useSOAP = 1.2;
+options.useWSA = 1.0;
+options.action = "urn:getVersion";
+var payload = null;
+var result;
+
+var payload = '<aut:loginWithRememberMeOption xmlns:aut="http://authentication.services.core.carbon.wso2.org"> <aut:username>isuru</aut:username><aut:password>1qaz2wsx@</aut:password><aut:remoteAddress>52.74.66.119</aut:remoteAddress></aut:loginWithRememberMeOption>';
+
+
+
+var result;
+
+
+
+
+try {
+    addRxt.open(options, "https://52.74.66.119:9443/services/AuthenticationAdmin", false, "", "");
+    addRxt.send(payload);
+    result = addRxt.responseText;
+} catch (e) {
+    log.error(e.toString());
+}
+
+
+
+print(result+"<br>");
+//print('<input width="100" type="text" id="ck" value='+result+'/>');
+//var order = new XML(result);
+//print(order+"<br>");
+//var v=order..*::['ax2129:authenticated'];
+//print(v+"<br>")
+var path = "/cookie.xml";
+
+   var file = new File(path);
+   file.open("w");
+   file.write(result);
+
+   file.close();
+
+
+
+
+
+
+
+%>
+
+<script type="text/javascript" src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script type="text/javascript">
+
+
+
+jQuery(document).ready( function($){
+     
+//alert($('#ck').val());
+//var ck=document.getElementById(#ck).value;
+//var ck = $('#ck').val();
+//alert("sfse");
+//alert(ck);
+/*
+var xml = $.parseXML("/cookie.xml");
+  $xml = $( xml );
+
+  //$test = $xml.find('ax2129:authenticated');
+//alert("valueF"+$test);
+console.log($xml);
+*/
+
+ var tmpSubject, tmpDate, tmpThumb;
+
+
+
+
+alert("first"+tmpThumb);
+
+
+
+ $.ajax({
+            url: '/mitrai/cookie.xml',
+            type: 'GET', 
+            dataType: 'xml',
+            success: function(returnedXMLResponse){
+                $('loginWithRememberMeOptionResponse', returnedXMLResponse).each(function(){
+                     tmpSubject = $('authenticated', this).text();
+                     tmpDate = $('maxAge', this).text();
+                     tmpThumb = $('value', this).text();
+
+                    console.log(tmpSubject + '' + tmpDate + ' ' + tmpThumb );
+alert(tmpSubject);
+alert(tmpDate);
+alert("second"+tmpThumb);
+$("#AuthSessionval").val(tmpThumb);
+
+if(tmpSubject){
+alert("yes");
+window.location.replace('https://192.168.1.9:9443/mitrai/dashboard.jag?ck='+tmpThumb);
+
+}else{
+alert("no");
+}
+
+
+
+                    //Here you can do anything you want with those temporary
+                    //variables, e.g. put them in some place in your html document
+                    //or store them in an associative array
+                })
+            }  
+        }); 
+
+
+});
+
+
+
+
+
+
+
+
+
+</script>
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+<%
+var scripts = [];
+var styles = [];
+var sessionId;
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+%>
+
+<script type="text/javascript" src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+<script language="javascript" src="js/WSRequest.js"></script>
+<script type="text/javascript">
+
+var flickr = new WSRequest();
+var options = new Array();
+options.useSOAP = 1.2;
+options.useWSA = 1.0;
+options.action = "https://52.74.66.119:9443/services/AuthenticationAdmin";
+
+var result;
+
+var payload = '<aut:loginWithRememberMeOption xmlns:aut="http://authentication.services.core.carbon.wso2.org"> <aut:username>isuru</aut:username><aut:password>1qaz2wsx@</aut:password><aut:remoteAddress>52.74.66.119</aut:remoteAddress></aut:loginWithRememberMeOption>';
+
+try {
+    flickr.open(options, "https://52.74.66.119:9443/services/AuthenticationAdmin", false, "", "");
+    flickr.send(payload);
+    result = flickr.responseXML;
+
+alert("sds");
+
+} catch (e) {
+    //log.error(e.toString());
+}
+
+
+
+
+var path = "/cookie.xml";
+
+  // var file = new File(path);
+  // file.open("w");
+  // file.write(result);
+
+  // file.close();
+
+
+
+jQuery(document).ready( function($){
+
+var tmpSubject, tmpDate, tmpThumb;
+
+ $.ajax({
+            url: '/mitrai/cookie.xml',
+            type: 'GET', 
+            dataType: 'xml',
+            success: function(returnedXMLResponse){
+                $('loginWithRememberMeOptionResponse', returnedXMLResponse).each(function(){
+                     tmpSubject = $('authenticated', this).text();
+                     tmpDate = $('maxAge', this).text();
+                     tmpThumb = $('value', this).text();
+
+                    console.log(tmpSubject + '' + tmpDate + ' ' + tmpThumb );
+alert(tmpSubject);
+alert(tmpDate);
+alert("second"+tmpThumb);
+$("#AuthSessionval").val(tmpThumb);
+
+if(tmpSubject){
+alert("yes");
+window.location.replace('https://192.168.1.9:9443/mitrai/dashboard.jag?ck='+tmpThumb);
+
+}else{
+alert("no");
+}
+
+
+
+                    //Here you can do anything you want with those temporary
+                    //variables, e.g. put them in some place in your html document
+                    //or store them in an associative array
+                })
+            }  
+        }); 
+
+
+});
+
+
+
+
+
+
+
+
+
+</script>
+
+

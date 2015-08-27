@@ -1,0 +1,250 @@
+<script>
+
+
+function loadAsPage(obj){
+ var page=obj.href;
+var eid=document.getElementById('contwrap');
+    document.getElementById('contwrap').innerHTML='<object data="'+page+
+      '" type="text/html"><embed src="'+page+'" type="text/html" /></object>';
+
+return false;
+
+}
+
+function go(obj) {
+//alert("..... "+obj);
+    var page=obj.href;
+
+
+
+/*
+    var eid=document.getElementById('contwrap');
+    document.getElementById('contwrap').innerHTML='<object data="'+page+
+      '" type="text/html"><embed src="'+page+'" type="text/html" /></object>';
+
+*/
+
+//alert("ds"+page);
+$('#contwrap').load(page);
+
+    return false;
+}
+
+
+function goto(obj) {
+    var page=obj.href;
+
+//alert("ds"+page);
+$('#contwrap').load('52.74.66.119:9453/bs/');
+
+    return false;
+}
+
+function loadDashboard(){
+$('#contwrap').load('https://52.74.66.119:9453/project_dashboard/');
+}
+
+function load3d(){
+<!-- $('#contwrap').load('https://52.74.66.119:9453/bs/'); -->
+$('#contwrap').html("<iframe src='https://52.74.66.119:9453/bs/'></iframe>");
+}
+
+function loadRule(){
+$('#contwrap').load('https://52.74.66.119:9453/alert/rule/');
+}
+
+function loadStat(){
+$('#contwrap').load('https://52.74.66.119:9453/stat/');
+}
+
+function loadAQ(){
+$('#contwrap').load('https://52.74.66.119:9453/asset_query/');
+}
+
+
+
+
+
+function loadx(){
+$('#contwrap').load('https://52.74.66.119:9453/bs/project_dashboard.jag');
+
+}
+
+function loadProjectCreation(){
+$('#contwrap').load('https://52.74.66.119:9453/project-management/create/');
+}
+
+function loadProjectList(){
+$('#contwrap').load('https://52.74.66.119:9453/project-management/list/');
+}
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function loadapi(){
+var cookie=getCookie("cookieval");
+//$('#contwrap').load('https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd');
+var url='https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd';
+window.open(url,'_blank');
+}
+
+
+
+
+
+
+</script>
+
+
+
+
+<aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- Sidebar user panel -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="themes/htmlBlogAggregator/img/user8-128x128.jpg" class="img-circle" alt="User Image" />
+            </div>
+            <div class="pull-left info">
+              <p>Joe Smith - BIMaaS Admin</p>
+
+              <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+          </div>
+          <!-- search form -->
+         <!-- <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search..."/>
+              <span class="input-group-btn">
+                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form> -->
+          <!-- /.search form -->
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu">
+            <li class="header">MAIN MENU</li>
+            
+			
+			 <!-- project structure shld load here -->
+            <li class="active treeview">
+              <a href="#">
+                <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="active"><a href="#" onclick="loadDashboard();"><i class="fa fa-circle-o"></i> Project Dashboard</a></li>
+              </ul>
+            </li>
+
+
+
+        <li class="treeview">
+              <a href="#">
+                <i class="fa fa-cube"></i>
+                <span>BIM 3D</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="#" onclick="load3d();"><i class="fa fa-circle-o"></i> 3D Model Visualisation</a></li>
+              </ul>
+            </li>
+
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-bar-chart-o"></i>
+                <span>BIM Stat</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a  href="#" onclick="loadStat();"><i class="fa fa-circle-o"></i> Model Analytics</a></li>
+                
+              </ul>
+		<ul class="treeview-menu">
+                <li><a  href="#" onclick="loadAQ();"><i class="fa fa-circle-o"></i> Asset Query</a></li>
+                
+              </ul>
+            </li>
+
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-bolt"></i> 
+			<span>BIM Alert</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="#" onclick="loadRule();"><i class="fa fa-circle-o"></i> Manage Rules</a></li>
+                
+              </ul>
+            </li>
+
+
+              <li class="treeview">
+                  <a href="#">
+                      <i class="fa fa-puzzle-piece"></i> <span>BIM Connect</span>
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </a>
+                  <ul class="treeview-menu">
+                      <li><a href="#" onclick="loadapi();"><i class="fa fa-circle-o"></i> API Store</a></li>
+                      
+                  </ul>
+              </li>
+
+	  <li class="treeview">
+              <a href="#">
+                <i class="fa fa-cogs"></i> 
+			<span>BIM Admin</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="#" onclick="loadProjectCreation();"><i class="fa fa-circle-o"></i> Add Project</a></li>
+              </ul>
+		<ul class="treeview-menu">
+                <li><a href="#" onclick="loadProjectList();"><i class="fa fa-circle-o"></i> List Projects</a></li>
+              </ul>
+
+            </li>
+
+
+<li class="header">HELP</li>
+            <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Documentation</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>About BIMaaS</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>License</span></a></li>
+
+
+
+
+
+
+
+
+
+
+           
+                   
+            
+            
+          </ul>
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+        </section>
+        <!-- /.sidebar -->
+      </aside>

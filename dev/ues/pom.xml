@@ -21,7 +21,7 @@
 	<modules>
 		<module>home</module>
 		<module>visualizer</module>
-		<module>alert/rule/rule-default-ues</module>
+		<module>alert/rule/rule-networkrail-ues</module>
         <module>project-management/list</module>
         <module>project-management/create</module>
         <module>project-management/update</module>

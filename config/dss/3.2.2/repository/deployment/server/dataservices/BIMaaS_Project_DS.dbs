@@ -1,0 +1,117 @@
+<data name="BIMaaS_Project_DS" transports="http https local">
+   <config id="bim_ds">
+      <property name="driverClassName">com.mysql.jdbc.Driver</property>
+      <property name="url">jdbc:mysql://127.0.0.1:3306/bim_exchange</property>
+      <property name="username">root</property>
+      <property name="password">1qaz2wsx@</property>
+   </config>
+   <query id="createProject_query" useConfig="bim_ds">
+      <sql>INSERT INTO project (poid, project_name, parent_id, latitude, longitude, created_by, type) VALUES (:poid, :projectName, :parentId, :latitude, :longitude, :userName, :type)</sql>
+      <param name="poid" ordinal="1" sqlType="STRING"/>
+      <param name="projectName" ordinal="2" sqlType="STRING"/>
+      <param name="parentId" ordinal="3" sqlType="STRING"/>
+      <param name="latitude" ordinal="4" sqlType="DOUBLE"/>
+      <param name="longitude" ordinal="5" sqlType="DOUBLE"/>
+      <param name="userName" ordinal="6" sqlType="STRING"/>
+      <param name="type" ordinal="7" sqlType="STRING"/>
+   </query>
+   <query id="createProjectRights_query" useConfig="bim_ds">
+      <sql>INSERT INTO project_rights (poid, authz_user) VALUES (:poid, :userName)</sql>
+      <param name="poid" ordinal="1" sqlType="STRING"/>
+      <param name="userName" ordinal="2" sqlType="STRING"/>
+   </query>
+   <query id="getAllProjectsByUser_query" useConfig="bim_ds">
+      <sql>select p.project_id as projectId, p.poid as poid, p.project_name as projectName, p.type as type, p.parent_id as parentId, p.latitude as latitude, p.longitude as longitude, p.geo_fence as geoFence, p.created_by as createdBy, pr.authz_user as currentUser, p.created_timestamp as createdTimestamp from project as p JOIN project_rights as pr on p.poid=pr.poid where authz_user=:userName</sql>
+      <result element="projects" rowName="project">
+         <element column="projectId" name="projectId" xsdType="long"/>
+         <element column="poid" name="poid" xsdType="string"/>
+         <element column="projectName" name="projectName" xsdType="string"/>
+         <element column="type" name="type" xsdType="string"/>
+         <element column="parentId" name="parentId" xsdType="string"/>
+         <element column="latitude" name="latitude" xsdType="string"/>
+         <element column="longitude" name="longitude" xsdType="string"/>
+         <element column="geoFence" name="geoFence" xsdType="base64Binary"/>
+         <element column="createdBy" name="createdBy" xsdType="string"/>
+         <element column="currentUser" name="currentUser" xsdType="string"/>
+         <element column="createdTimestamp" name="createdTimestamp" xsdType="string"/>
+      </result>
+      <param name="userName" sqlType="STRING"/>
+   </query>
+   <query id="getCoordinatesByProjectId_query" useConfig="bim_ds">
+      <sql>SELECT latitude, longitude FROM project WHERE poid=:poid</sql>
+      <result element="coordinates" rowName="coordinate">
+         <element column="latitude" name="latitude" xsdType="string"/>
+         <element column="longitude" name="longitude" xsdType="string"/>
+      </result>
+      <param name="poid" sqlType="STRING"/>
+   </query>
+   <query id="getSubProjectsByParentAndUser_query" useConfig="bim_ds">
+      <sql>select p.project_id as projectId, p.poid as poid, p.project_name as projectName, p.type as type, p.parent_id as parentId, (select project_name from project where poid=:parentId) as parentName, p.active_revision_id as activateRevisionId, p.latitude as latitude, p.longitude as longitude, p.geo_fence as geoFence, p.created_by as createdBy, pr.authz_user as currentUser, p.created_timestamp as createdTimestamp from project as p JOIN project_rights as pr on p.poid=pr.poid where authz_user=:userName AND p.parent_id=:parentId</sql>
+      <result element="projects" rowName="project">
+         <element column="projectId" name="projectId" xsdType="long"/>
+         <element column="poid" name="poid" xsdType="string"/>
+         <element column="projectName" name="projectName" xsdType="string"/>
+         <element column="type" name="type" xsdType="string"/>
+         <element column="parentId" name="parentId" xsdType="string"/>
+         <element column="parentName" name="parentName" xsdType="string"/>
+         <element column="activateRevisionId" name="activateRevisionId" xsdType="string"/>
+         <element column="latitude" name="latitude" xsdType="string"/>
+         <element column="longitude" name="longitude" xsdType="string"/>
+         <element column="geoFence" name="geoFence" xsdType="base64Binary"/>
+         <element column="createdBy" name="createdBy" xsdType="string"/>
+         <element column="currentUser" name="currentUser" xsdType="string"/>
+         <element column="createdTimestamp" name="createdTimestamp" xsdType="string"/>
+      </result>
+      <param name="parentId" sqlType="STRING"/>
+      <param name="userName" sqlType="STRING"/>
+   </query>
+   <operation name="createProject_Op" returnRequestStatus="true">
+      <call-query href="createProject_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="projectName" query-param="projectName"/>
+         <with-param name="parentId" query-param="parentId"/>
+         <with-param name="latitude" query-param="latitude"/>
+         <with-param name="longitude" query-param="longitude"/>
+         <with-param name="userName" query-param="userName"/>
+         <with-param name="type" query-param="type"/>
+      </call-query>
+   </operation>
+   <operation name="createProjectRights_Op" returnRequestStatus="true">
+      <call-query href="createProjectRights_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </operation>
+   <operation name="getAllProjectsByUser_op" returnRequestStatus="true">
+      <call-query href="getAllProjectsByUser_query">
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </operation>
+   <operation name="getCoordinatesByProjectId_Op">
+      <call-query href="getCoordinatesByProjectId_query">
+         <with-param name="poid" query-param="poid"/>
+      </call-query>
+   </operation>
+   <operation name="getSubProjectsByParentAndUser_op" returnRequestStatus="true">
+      <call-query href="getSubProjectsByParentAndUser_query">
+         <with-param name="parentId" query-param="parentId"/>
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </operation>
+   <resource method="POST" path="create-project" returnRequestStatus="true">
+      <call-query href="createProject_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="projectName" query-param="projectName"/>
+         <with-param name="parentId" query-param="parentId"/>
+         <with-param name="latitude" query-param="latitude"/>
+         <with-param name="longitude" query-param="longitude"/>
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </resource>
+   <resource method="POST" path="create-project-rights" returnRequestStatus="true">
+      <call-query href="createProjectRights_query">
+         <with-param name="poid" query-param="poid"/>
+         <with-param name="userName" query-param="userName"/>
+      </call-query>
+   </resource>
+</data>

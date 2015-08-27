@@ -6,8 +6,20 @@
                 name="[BIM-EX_LOG] | Error Response"
                 expression="json-eval($.)"/>
    </log>
-   <class name="com.mitrai.bimexchange.CheckinIfcInFlowMediator">
-      <property name="operation" value="UPDATE"/>
-      <property name="status" value="WAITING"/>
-   </class>
+   <property name="messageType"
+             value="application/xml"
+             scope="default"
+             type="STRING"/>
+   <payloadFactory media-type="xml">
+      <format>
+         <p:updateCheckinStatusById_Op xmlns:p="http://ws.wso2.org/dataservice">
+            <p:status>$1</p:status>
+            <p:referenceId>$2</p:referenceId>
+         </p:updateCheckinStatusById_Op>
+      </format>
+      <args>
+         <arg value="WAITING"/>
+         <arg evaluator="xml" expression="get-property('IFC_REFERENCE_ID')"/>
+      </args>
+   </payloadFactory>
 </sequence>

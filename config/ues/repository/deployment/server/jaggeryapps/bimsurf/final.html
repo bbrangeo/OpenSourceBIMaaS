@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+
+<title>BIMsurfer - Basic viewer</title>
+
+<script type="text/javascript">
+
+var debug = {};
+
+</script>
+
+<!-- 2 load the theme CSS file -->
+<link rel="stylesheet" href="css/style.min.css" />
+
+<!-- 4 include the jQuery library -->
+<script type="text/javascript" src="./lib/jquery-1.10.2/jquery-1.10.2.min.js"></script>
+
+<!-- 5 include the minified jstree source -->
+<script src="js/jstree.min.js"></script>
+
+<script type="text/javascript" src="./lib/jquery-1.10.2/jquery.cookie.js"></script>
+<script type="text/javascript" src="./api/BIMSURFER.js"></script>
+<script type="text/javascript" src="./lib/scenejs/scenejs.js"></script>
+<script type="text/javascript" src="./api/SceneJS.js"></script>
+<script type="text/javascript" src="./api/Constants.js"></script>
+<script type="text/javascript" src="./api/ProgressLoader.js"></script>
+<script type="text/javascript" src="./api/Types/Light.js"></script>
+<script type="text/javascript" src="./api/Types/Light/Ambient.js"></script>
+<script type="text/javascript" src="./api/Types/Light/Sun.js"></script>
+<script type="text/javascript" src="./api/Control.js"></script>
+<script type="text/javascript" src="./api/Control.js"></script>
+<script type="text/javascript" src="./api/Control/ClickSelect.js"></script>
+<script type="text/javascript" src="./api/Control/LayerList.js"></script>
+<script type="text/javascript" src="./api/Control/ProgressBar.js"></script>
+<script type="text/javascript" src="./api/Control/PickFlyOrbit.js"></script>
+<script type="text/javascript" src="./api/Control/ObjectTreeView.js"></script>
+<script type="text/javascript" src="./api/Events.js"></script>
+<script type="text/javascript" src="./api/StringView.js"></script>
+<script type="text/javascript" src="./api/GeometryLoader.js"></script>
+<script type="text/javascript" src="./api/AsyncStream.js"></script>
+<script type="text/javascript" src="./api/DataInputStream.js"></script>
+<script type="text/javascript" src="./api/Viewer.js"></script>
+<script type="text/javascript" src="./api/Util.js"></script>
+<script type="text/javascript" src="js/bimserverapibootstrap.js"></script>
+<script type="text/javascript" src="js/String.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+
+<link rel="stylesheet" href="./css/basic.css" type="text/css" />
+<link rel="stylesheet" href="./css/example1.css" type="text/css" />
+<link rel="stylesheet" href="./css/bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="./lib/jquery-ui-1.10.3.custom/css/custom-theme/jquery-ui-1.10.3.custom.css">
+
+<script type="text/javascript" src="./lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+
+<!-- <script type="text/javascript" src="./js/example1.js"></script> -->
+    <script>
+        /* Define the global variables */
+        var selectedNode;
+        var jsonTree = {
+            "core": {
+                "data": []
+            }
+        };
+        var treeData="";
+
+    </script>
+<script type="text/javascript" src="./js/final.js"></script>
+<script type="text/javascript" src="./js/bootstrap.js"></script>
+
+
+</head>
+
+<body oncontextmenu="return false;">
+
+
+<!-- Start of NavBar -->
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Mitra</a>
+    </div>
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!-- End of NavBar -->
+
+
+<!-- Stack the columns on mobile by making one full-width and the other half-width -->
+<div class="row">
+
+    <div class="treeClass col-xs-12" >
+        </div>
+
+
+    <!-- Div for the project tree viewer -->
+  	<div class="col-xs-3" > 
+        <div id="treeViewDiv" class="col-xs-12"></div>
+        <div id="nodeDetails" class="col-xs-12"> <h3>Object Details </h3> </div>
+        <!--<div id="tree" class="treeClass col-xs-12" style="height: 250px;overflow: auto;"> <h3>Tree Details </h3> </div>-->
+
+
+        <!--<div class="col-xs-12"> <button onclick="createDialog()"> create Dialog</button></div>-->
+	</div>  	
+
+  	<!-- Div for the 3d renderer+ -->
+  	<div class="col-xs-9">  		
+		<div id="full_screen" style="top : 0px !important">
+			<div id="viewport"></div>
+			<div id="progress_bar"></div>
+		</div>
+	</div>
+</div>
+
+
+<script>
+//    function createDialog() {
+//        var dialog = $('<div />').attr('title', 'Open a project');
+//        var projectList = $('<ul />').attr('id', 'projects').appendTo(dialog);
+//
+//        $(dialog).dialog({
+//            autoOpen: true,
+//            width: 450,
+//            modal: false,
+//            closeOnEscape: false,
+//            open: function(event, ui) { $(".ui-dialog .ui-dialog-titlebar-close").hide(); },
+//            close: function() { $(dialog).remove(); }
+//        });
+//    }
+
+</script>
+
+</body>
+</html>

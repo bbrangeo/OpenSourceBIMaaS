@@ -1,0 +1,274 @@
+<%
+var scripts = [];
+var styles = [];
+var process = require('process');
+var url = 'http://' + process.getProperty('server.host') + ':' +process.getProperty('http.port');
+
+
+
+
+//var v=request.getCookie("cookieval");
+var cookie="temp";
+//var cookie=v.value;
+//print(v.value);   
+
+var rxt = "JSON RXT Config Should go here";
+var log = new Log();
+var ws = require('ws');
+
+var addRxt = new ws.WSRequest();
+var options = new Array();
+options.useSOAP = 1.2;
+options.useWSA = 1.0;
+options.action = "urn:getVersion";
+var payload = null;
+var result;
+
+var payload = '<aut:loginWithRememberMeCookie xmlns:aut="http://authentication.services.core.carbon.wso2.org"><aut:cookie>'+cookie+'</aut:cookie></aut:loginWithRememberMeCookie>';
+
+var result;
+
+try {
+    addRxt.open(options, "https://52.74.66.119:9443/services/AuthenticationAdmin", false, "", "");
+    addRxt.send(payload);
+    result = addRxt.responseE4X;
+} catch (e) {
+    log.error(e.toString());
+}
+
+//print(result+"<br>");
+//print('<input width="100" type="text" id="ck" value='+result+'/>');
+//var order = new XML(result);
+//print(order+"<br>");
+//var v=order..*::['ax2129:authenticated'];
+//print(v+"<br>")
+var path = "/checkcookie.xml";
+
+   var file = new File(path);
+   file.open("w");
+   file.write(result);
+   file.close();
+
+
+include("includes/header.jag");
+
+//response.sendRedirect('https://52.74.66.119:9443/store/?ck='+cookie+'&abc=efd');
+
+
+
+%>
+<script>
+
+function go(obj) {
+
+    var page=obj.href;
+
+
+var eid=document.getElementById('contwrap');
+
+    document.getElementById('contwrap').innerHTML='<object data="'+page+
+      '" type="text/html"><embed src="'+page+'" type="text/html" /></object>';
+
+
+    return false;
+}
+
+
+
+
+
+</script>
+
+  <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+          <!-- Sidebar user panel -->
+          <div class="user-panel">
+            <div class="pull-left image">
+              <img src="dist/img/user8-128x128.jpg" class="img-circle" alt="User Image" />
+            </div>
+            <div class="pull-left info">
+              <p>Joe Smith - BIMaaS Admin</p>
+
+              <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+          </div>
+          <!-- search form -->
+         <!-- <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+              <input type="text" name="q" class="form-control" placeholder="Search..."/>
+              <span class="input-group-btn">
+                <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </form> -->
+          <!-- /.search form -->
+          <!-- sidebar menu: : style can be found in sidebar.less -->
+          <ul class="sidebar-menu">
+            <li class="header">MAIN MENU</li>
+            
+			
+			 <!-- project structure shld load here -->
+            <li class="active treeview">
+              <a href="#">
+                <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li class="active"><a href="https://192.168.1.10:9453/mitrai/project_dashboard.jag" onclick="return go(this);"><i class="fa fa-circle-o"></i> Project Dashboard</a></li>
+              </ul>
+            </li>
+
+
+
+        <li class="treeview">
+              <a href="#">
+                <i class="fa fa-cube"></i>
+                <span>BIM 3D</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="https://192.168.1.10:9453/bs/" onclick="return go(this);"><i class="fa fa-circle-o"></i> 3D Model Visualisation</a></li>
+              </ul>
+            </li>
+
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-bar-chart-o"></i>
+                <span>BIM Stat</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="#"><i class="fa fa-circle-o"></i> Model Analytics</a></li>
+                
+              </ul>
+            </li>
+
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-bolt"></i> <span>BIM Alert</span>
+                <i class="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="#"><i class="fa fa-circle-o"></i> Manage Rules</a></li>
+                
+              </ul>
+            </li>
+
+
+              <li class="treeview">
+                  <a href="#">
+                      <i class="fa fa-cogs"></i> <span>BIM Connect</span>
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </a>
+                  <ul class="treeview-menu">
+                      <li><a href="https://52.74.66.119:9443/store/?ck=<%=cookie%>&abc=efd" ><i class="fa fa-circle-o"></i> API Store</a></li>
+                      
+                  </ul>
+              </li>
+
+
+
+<li class="header">HELP</li>
+            <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Documentation</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>About BIMaaS</span></a></li>
+            <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>License</span></a></li>
+
+
+
+
+
+
+
+
+
+
+           
+                   
+            
+            
+          </ul>
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+        </section>
+        <!-- /.sidebar -->
+      </aside>
+      
+      
+      
+      
+      
+      
+      <div class="content-wrapper" id="contwrap">
+
+
+
+
+      </div>
+
+      <%
+include("includes/footer.jag");
+
+
+
+
+
+%>
+     
+      <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+      <div class='control-sidebar-bg'></div>
+
+    </div><!-- ./wrapper -->
+
+<script>
+
+$(function() {
+    $("#dialog").dialog({
+        autoOpen: false,
+        position: {
+            my: "left top",
+            at: "left bottom",
+            of: $("#parent")
+        }
+    });
+
+    $("#button").on("click", function() {
+        $("#dialog").dialog("open");
+    });
+});
+
+$.fn.tabbedDialog = function () {
+    this.tabs();
+    this.dialog({
+        'autoOpen':false,
+        'modal':false,
+        'minWidth':400,
+        'minHeight':200,
+        'draggable':true,
+        position: {
+            my: "left top",
+            at: "left bottom",
+            of: $("#testing")
+    }});
+    this.find('.ui-tab-dialog-close').append($('a.ui-dialog-titlebar-close'));
+    this.find('.ui-tab-dialog-close').css({'position':'absolute','right':'0', 'top':'23px'});
+    this.find('.ui-tab-dialog-close > a').css({'float':'none','padding':'0'});
+    var tabul = this.find('ul:first');
+    this.parent().addClass('ui-tabs').prepend(tabul).draggable('option','handle',tabul);
+    this.siblings('.ui-dialog-titlebar').remove();
+    tabul.addClass('ui-dialog-titlebar');
+};
+
+$('#tenant').tabbedDialog();
+
+</script>
+
+</body>
+</html>
